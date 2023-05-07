@@ -1,6 +1,10 @@
 package serializer
 
-import "ji/repository/db/model"
+import (
+	"ji/config"
+	"ji/repository/db/model"
+	"time"
+)
 
 type User struct {
 	ID       uint   `json:"id"`
@@ -9,7 +13,8 @@ type User struct {
 	Type     int    `json:"type"`
 	Email    string `json:"email"`
 	Status   string `json:"status"`
-	// Avatar   string `json:"avatar"`
+	Avatar   string `json:"avatar"`
+	LastLogin time.Time `json:"last_login"`
 	CreateAt int64 `json:"create_at"`
 }
 
@@ -21,7 +26,8 @@ func BuildUser(user *model.User) *User {
 		NickName: user.NickName,
 		Email:    user.Email,
 		Status:   user.Status,
-		// Avatar:   conf.PhotoHost + conf.HttpPort + conf.AvatarPath + user.AvatarURL(),
+		LastLogin: user.LastLogin,
+		Avatar:   config.Conf.Static.StaticHost + config.Conf.Static.StaticPort + config.Conf.Static.AvatarPath + user.AvatarURL(),
 		CreateAt: user.CreatedAt.Unix(),
 	}
 

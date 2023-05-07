@@ -10,7 +10,7 @@ import (
 
 func NewRouter() *gin.Engine {
 	r := gin.Default()
-	r.StaticFS("/static", http.Dir("./static"))
+	r.StaticFS("/static", http.Dir("../static"))
 
 	v1 := r.Group("api/v1")
 	{

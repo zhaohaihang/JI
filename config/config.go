@@ -27,10 +27,17 @@ type RedisConf struct {
 	RedisDbName string `flag:"redis_dbname" toml:"redis_dbname" json:"redis_dbname"`
 }
 
+type StaticConf struct {
+	StaticHost string `flag:"static_host" toml:"static_host" json:"static_host"`
+	StaticPort  string `flag:"static_port" toml:"static_port" json:"static_port"`
+	AvatarPath string  `flag:"avatar_path" toml:"avatar_path" json:"avatar_path"`
+}
+
 type Config struct {
 	Server ServerConf `flag:"server" toml:"server" json:"server"`
 	Mysql  MysqlConf  `flag:"mysql" toml:"mysql" json:"mysql"`
 	Redis  RedisConf  `flag:"redis" toml:"redis" json:"redis"`
+	Static   StaticConf  `flag:"static" toml:"static" json:"static"`
 }
 
 var Conf = Config{}

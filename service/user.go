@@ -66,7 +66,6 @@ func (service UserService) Register(ctx context.Context) serializer.Response {
 	}
 }
 
-
 // Login 用户登陆函数
 func (service *UserService) Login(ctx context.Context) serializer.Response {
 	var user *model.User
@@ -82,11 +81,12 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 			}
 		}
 	} else { // 如果不存在则新建
-		user := &model.User{
+		user = &model.User{
 			UserName: service.UserName,
 			Status:   model.Active,
 		}
 		user.GenerateRandomNickName()
+		user.Avatar = "avatar.jpg"
 		// 加密密码
 		if err := user.SetPassword(service.Password); err != nil {
 			logrus.Info(err)
@@ -97,7 +97,7 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 			}
 		}
 		// 创建用户
-		if err := userDao.CreateUser(user) ;err != nil {
+		if err := userDao.CreateUser(user); err != nil {
 			logrus.Info(err)
 			code = e.ErrorDatabase
 			return serializer.Response{
@@ -105,7 +105,7 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 				Msg:    e.GetMsg(code),
 			}
 		}
-	} 
+	}
 
 	token, err := utils.GenerateToken(user.ID, service.UserName, 0)
 	if err != nil {
@@ -116,6 +116,7 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 			Msg:    e.GetMsg(code),
 		}
 	}
+
 	return serializer.Response{
 		Status: code,
 		Data:   serializer.TokenData{User: serializer.BuildUser(user), Token: token},
