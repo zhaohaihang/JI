@@ -21,6 +21,7 @@ func NewUserDaoByDB(db *gorm.DB) *UserDao {
 
 // GetUserById 根据 id 获取用户
 func (userDao *UserDao) GetUserById(uId uint) (user *model.User, err error) {
+	//err = userDao.DB.Model(&model.User{}).Select("id,ST_AsTEXT(location)").Where("id=?", uId).
 	err = userDao.DB.Model(&model.User{}).Where("id=?", uId).
 		First(&user).Error
 	return
@@ -55,3 +56,11 @@ func (userDao *UserDao) CreateUser(user *model.User) error {
 func (userDao *UserDao) UpdateLastLoginById(uId uint, user *model.User) (err error) {
 	return userDao.DB.Model(&model.User{}).Where("id=?", uId).Updates(user).Error
 }
+
+// func GetNearestUsers(lat, lng float64) ([]User, error) {
+//     var users []User
+//     if err := db.Where(`ST_Distance_Sphere(location, ST_GeomFromText(?)) < 1609.34`, fmt.Sprintf("POINT(%.6f %.6f)", lng, lat)).Order("ST_Distance_Sphere(location, ST_GeomFromText(?)) DESC", fmt.Sprintf("POINT(%.6f %.6f)", lng, lat)).Find(&users).Error; err != nil {
+//         return nil, err
+//     }
+//     return users, nil
+// }

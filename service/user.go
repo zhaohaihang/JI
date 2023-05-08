@@ -12,8 +12,11 @@ import (
 )
 
 type UserService struct {
-	UserName string `form:"user_name" json:"user_name"`
-	Password string `form:"password" json:"password"`
+	UserName  string `form:"user_name" json:"user_name"`
+	Password  string `form:"password" json:"password"`
+	NickName  string `form:"nick_name" json:"nick_name"`
+	Biography string `form:"biography" json:"biography"`
+	Address   string `form:"address" json:"address"`
 }
 
 func (service UserService) Register(ctx context.Context) serializer.Response {
@@ -87,6 +90,8 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 		}
 		user.GenerateRandomNickName()
 		user.Avatar = "avatar.jpg"
+		user.Location.Lat = 0.0
+		user.Location.Lng = 0.0
 		// 加密密码
 		if err := user.SetPassword(service.Password); err != nil {
 			logrus.Info(err)
@@ -120,6 +125,49 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 	return serializer.Response{
 		Status: code,
 		Data:   serializer.TokenData{User: serializer.BuildUser(user), Token: token},
+		Msg:    e.GetMsg(code),
+	}
+}
+
+// Update 用户修改信息
+func (service UserService) UpdateUserById(ctx context.Context, uId uint) serializer.Response {
+	var user *model.User
+	var err error
+	code := e.SUCCESS
+	// 找到用户
+	userDao := dao.NewUserDao(ctx)
+	user, err = userDao.GetUserById(uId)
+
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	if service.NickName != "" {
+		user.NickName = service.NickName
+	}
+	user.Biography = service.Biography
+	user.Address = service.Address
+
+	err = userDao.UpdateUserById(uId, user)
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
+		Data:   serializer.BuildUser(user),
 		Msg:    e.GetMsg(code),
 	}
 }

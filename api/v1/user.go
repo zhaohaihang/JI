@@ -29,3 +29,15 @@ func UserLogin(c *gin.Context) {
 		utils.LogrusObj.Infoln(err)
 	}
 }
+
+func UserUpdate(c *gin.Context) {
+	var userUpdateService service.UserService
+	claims, _ := utils.ParseToken(c.GetHeader("Authorization"))
+	if err := c.ShouldBind(&userUpdateService); err == nil {
+		res := userUpdateService.UpdateUserById(c.Request.Context(), claims.UserID)
+		c.JSON(consts.StatusOK, res)
+	} else {
+		c.JSON(consts.IlleageRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln(err)
+	}
+}
