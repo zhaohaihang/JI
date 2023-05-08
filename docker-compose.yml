@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+  civil:
+    build: ./
+    image: ji:0.2
+    container_name: ji
+    restart: always
+    environment:
+      MYSQL_DSN: "root:root@tcp/ji_db?charset=utf8&parseTime=True&loc=Local"
+    ports:
+      - 4000:4000
+    depends_on:
+      - mysql
+
+  mysql:
+    container_name: ji_mysql
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: ji_db
+    volumes:
+      - /var/lib/mysql:/var/lib/mysql
+    ports:
+      - 3306:3306
