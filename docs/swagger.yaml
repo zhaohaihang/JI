@@ -1,0 +1,102 @@
+basePath: /api/v1
+definitions:
+  model.Point:
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+    type: object
+  serializer.Response:
+    properties:
+      data: {}
+      error:
+        type: string
+      msg:
+        type: string
+      status:
+        type: integer
+    type: object
+  serializer.User:
+    properties:
+      address:
+        type: string
+      avatar:
+        type: string
+      biography:
+        type: string
+      create_at:
+        type: integer
+      email:
+        type: string
+      id:
+        type: integer
+      last_login:
+        type: string
+      location:
+        $ref: '#/definitions/model.Point'
+      nickname:
+        type: string
+      phone:
+        type: string
+      status:
+        type: string
+      type:
+        type: integer
+      user_name:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:4000
+info:
+  contact:
+    email: 1932859223@qq.com
+    name: Zhao Haihang
+    url: http://www.swagger.io/support
+  description: The api docs of JI project
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: JI API
+  version: "1.0"
+paths:
+  /api/v1/user/login:
+    post:
+      consumes:
+      - application/json
+      description: 用户登录接口，如果用户不存在则创建用户
+      parameters:
+      - description: 用户名
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: 密码
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/serializer.User'
+              type: object
+      summary: 用户登录
+      tags:
+      - user
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

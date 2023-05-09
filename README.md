@@ -31,3 +31,12 @@ ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456';
 FLUSH PRIVILEGES;
 ```
+
+
+# swag
+```
+https://blog.csdn.net/joychenwenyu/article/details/126935706
+
+cd ji #进入项目根路径
+swag init -g cmd/main.go -o docs  #初始化文档
+```

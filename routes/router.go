@@ -6,11 +6,17 @@ import (
 	api "ji/api/v1"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 )
 
 func NewRouter() *gin.Engine {
 	r := gin.Default()
 	r.StaticFS("/static", http.Dir("../static"))
+	r.GET("/swagger/*any", func(c *gin.Context) {
+		ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "SWAGGER")(c)
+	})
 
 	v1 := r.Group("api/v1")
 	{
