@@ -1,14 +1,17 @@
 package utils
 
 import (
-	"github.com/dgrijalva/jwt-go"
+	"fmt"
+	"strings"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 var jwtSecret = []byte("FanOne")
 
 type Claims struct {
-	UserID 		  uint 	`json:"user_id"`
+	UserID    uint   `json:"user_id"`
 	Username  string `json:"username"`
 	Authority int    `json:"authority"`
 	jwt.StandardClaims
@@ -33,8 +36,13 @@ func GenerateToken(id uint, username string, authority int) (string, error) {
 }
 
 //ParseToken 验证用户token
-func ParseToken(token string) (*Claims, error) {
-	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+func ParseToken(tokenStr string) (*Claims, error) {
+	token := strings.Fields(tokenStr)
+	if len(token) != 2 || strings.ToLower(token[0]) != "Bearer" || token[1] == "" {
+		return nil, fmt.Errorf("authorization header invaild")
+	}
+
+	tokenClaims, err := jwt.ParseWithClaims(token[1], &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
 	})
 	if tokenClaims != nil {
@@ -44,44 +52,3 @@ func ParseToken(token string) (*Claims, error) {
 	}
 	return nil, err
 }
-
-// //EmailClaims
-// type EmailClaims struct {
-// 	UserID        uint   `json:"user_id"`
-// 	Email         string `json:"email"`
-// 	Password      string `json:"password"`
-// 	OperationType uint   `json:"operation_type"`
-// 	jwt.StandardClaims
-// }
-
-// //GenerateEmailToken 签发邮箱验证Token
-// func GenerateEmailToken(userID, Operation uint, email, password string) (string, error) {
-// 	nowTime := time.Now()
-// 	expireTime := nowTime.Add(15 * time.Minute)
-// 	claims := EmailClaims{
-// 		UserID:        userID,
-// 		Email:         email,
-// 		Password:      password,
-// 		OperationType: Operation,
-// 		StandardClaims: jwt.StandardClaims{
-// 			ExpiresAt: expireTime.Unix(),
-// 			Issuer:    "cmall",
-// 		},
-// 	}
-// 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-// 	token, err := tokenClaims.SignedString(jwtSecret)
-// 	return token, err
-// }
-
-// //ParseEmailToken 验证邮箱验证token
-// func ParseEmailToken(token string) (*EmailClaims, error) {
-// 	tokenClaims, err := jwt.ParseWithClaims(token, &EmailClaims{}, func(token *jwt.Token) (interface{}, error) {
-// 		return jwtSecret, nil
-// 	})
-// 	if tokenClaims != nil {
-// 		if claims, ok := tokenClaims.Claims.(*EmailClaims); ok && tokenClaims.Valid {
-// 			return claims, nil
-// 		}
-// 	}
-// 	return nil, err
-// }
