@@ -12,21 +12,17 @@ import (
 )
 
 type UserService struct {
-	UserName  string `form:"user_name" json:"user_name"`
-	Password  string `form:"password" json:"password"`
-	NickName  string `form:"nick_name" json:"nick_name"`
-	Biography string `form:"biography" json:"biography"`
-	Address   string `form:"address" json:"address"`
+	
 }
 
 // Login 用户登陆函数
-func (service *UserService) Login(ctx context.Context) serializer.Response {
+func (service *UserService) Login(ctx context.Context, loginUserInfo LoginUserInfo) serializer.Response {
 	var user *model.User
 	code := e.SUCCESS
 	userDao := dao.NewUserDao(ctx)
-	user, exist, _ := userDao.ExistOrNotByUserName(service.UserName)
+	user, exist, _ := userDao.ExistOrNotByUserName(loginUserInfo.UserName)
 	if exist { // 如果存在，则校验密码
-		if !user.CheckPassword(service.Password) {
+		if !user.CheckPassword(loginUserInfo.Password) {
 			code = e.ErrorNotCompare
 			return serializer.Response{
 				Status: code,
@@ -35,15 +31,17 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 		}
 	} else { // 如果不存在则新建
 		user = &model.User{
-			UserName: service.UserName,
+			UserName: loginUserInfo.UserName,
 			Status:   model.Active,
 		}
-		user.GenerateRandomNickName()
 		user.Avatar = "avatar.jpg"
-		user.Location.Lat = 0.0
-		user.Location.Lng = 0.0
+		if loginUserInfo.Type == 0 {
+			user.Phone = loginUserInfo.UserName
+		}else {
+			user.Email = loginUserInfo.UserName
+		}
 		// 加密密码
-		if err := user.SetPassword(service.Password); err != nil {
+		if err := user.SetPassword(loginUserInfo.Password); err != nil {
 			logrus.Info(err)
 			code = e.SUCCESS
 			return serializer.Response{
@@ -62,7 +60,7 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 		}
 	}
 
-	token, err := utils.GenerateToken(user.ID, service.UserName, 0)
+	token, err := utils.GenerateToken(user.ID, loginUserInfo.UserName, 0)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorAuthToken
@@ -98,11 +96,8 @@ func (service UserService) UpdateUserById(ctx context.Context, uId uint) seriali
 		}
 	}
 
-	if service.NickName != "" {
-		user.NickName = service.NickName
-	}
-	user.Biography = service.Biography
-	user.Address = service.Address
+	// user.Biography = service.Biography
+	// user.Address = service.Address
 
 	err = userDao.UpdateUserById(uId, user)
 	if err != nil {

@@ -3,7 +3,6 @@ package model
 import (
 	"time"
 
-	"github.com/DanPlayer/randomname"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -17,11 +16,11 @@ type User struct {
 	Address        string
 	Email          string
 	Phone          string
-	NickName       string
 	Status         string
 	Avatar         string `gorm:"size:1000"`
 	LastLogin      time.Time
 	Location       Point `gorm:"type:point"`
+	Extra          string `gorm:"size:1000"`
 }
 
 const (
@@ -48,10 +47,6 @@ func (user *User) SetPassword(password string) error {
 func (user *User) CheckPassword(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(user.PasswordDigest), []byte(password))
 	return err == nil
-}
-
-func (user *User) GenerateRandomNickName() {
-	user.NickName = randomname.GenerateName()
 }
 
 // AvatarUrl 头像地址

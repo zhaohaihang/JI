@@ -3,7 +3,7 @@ version: '3.3'
 services:
   civil:
     build: ./
-    image: ji:0.2
+    image: ji:0.1
     container_name: ji
     restart: always
     environment:

@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	_ "ji/docs"
 )
 
 func NewRouter() *gin.Engine {

@@ -17,6 +17,12 @@ definitions:
       status:
         type: integer
     type: object
+  serializer.TokenData:
+    properties:
+      token:
+        type: string
+      user: {}
+    type: object
   serializer.User:
     properties:
       address:
@@ -25,8 +31,6 @@ definitions:
         type: string
       biography:
         type: string
-      create_at:
-        type: integer
       email:
         type: string
       id:
@@ -35,11 +39,18 @@ definitions:
         type: string
       location:
         $ref: '#/definitions/model.Point'
-      nickname:
-        type: string
       phone:
         type: string
       status:
+        type: string
+      username:
+        type: string
+      xxtra:
+        type: string
+    type: object
+  service.LoginUserInfo:
+    properties:
+      password:
         type: string
       type:
         type: integer
@@ -69,18 +80,12 @@ paths:
       - application/json
       description: 用户登录接口，如果用户不存在则创建用户
       parameters:
-      - description: 用户名
+      - description: user info
         in: body
-        name: username
+        name: post
         required: true
         schema:
-          type: string
-      - description: 密码
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/service.LoginUserInfo'
       produces:
       - application/json
       responses:
@@ -91,7 +96,12 @@ paths:
             - $ref: '#/definitions/serializer.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/serializer.User'
+                  allOf:
+                  - $ref: '#/definitions/serializer.TokenData'
+                  - properties:
+                      user:
+                        $ref: '#/definitions/serializer.User'
+                    type: object
               type: object
       summary: 用户登录
       tags:

@@ -40,21 +40,12 @@ const docTemplate = `{
                 "summary": "用户登录",
                 "parameters": [
                     {
-                        "description": "用户名",
-                        "name": "username",
+                        "description": "user info",
+                        "name": "post",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "密码",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/service.LoginUserInfo"
                         }
                     }
                 ],
@@ -70,7 +61,19 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/serializer.User"
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/serializer.TokenData"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "user": {
+                                                            "$ref": "#/definitions/serializer.User"
+                                                        }
+                                                    }
+                                                }
+                                            ]
                                         }
                                     }
                                 }
@@ -108,6 +111,15 @@ const docTemplate = `{
                 }
             }
         },
+        "serializer.TokenData": {
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string"
+                },
+                "user": {}
+            }
+        },
         "serializer.User": {
             "type": "object",
             "properties": {
@@ -119,9 +131,6 @@ const docTemplate = `{
                 },
                 "biography": {
                     "type": "string"
-                },
-                "create_at": {
-                    "type": "integer"
                 },
                 "email": {
                     "type": "string"
@@ -135,13 +144,24 @@ const docTemplate = `{
                 "location": {
                     "$ref": "#/definitions/model.Point"
                 },
-                "nickname": {
-                    "type": "string"
-                },
                 "phone": {
                     "type": "string"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "xxtra": {
+                    "type": "string"
+                }
+            }
+        },
+        "service.LoginUserInfo": {
+            "type": "object",
+            "properties": {
+                "password": {
                     "type": "string"
                 },
                 "type": {

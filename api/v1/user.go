@@ -14,14 +14,14 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param username body string true "用户名"
-// @Param password body string true "密码"
-// @Success 200 {object} serializer.Response{data=serializer.User}
+// @Param post body service.LoginUserInfo true "user info"
+// @Success 200 {object} serializer.Response{data=serializer.TokenData{user=serializer.User}}
 // @Router /api/v1/user/login [post]
 func UserLogin(c *gin.Context) {
 	var userLoginService service.UserService
-	if err := c.ShouldBind(&userLoginService); err == nil {
-		res := userLoginService.Login(c.Request.Context())
+	var loginUserInfo service.LoginUserInfo
+	if err := c.ShouldBind(&loginUserInfo); err == nil {
+		res := userLoginService.Login(c.Request.Context(),loginUserInfo)
 		c.JSON(consts.StatusOK, res)
 	} else {
 		c.JSON(consts.IlleageRequest, ErrorResponse(err))
