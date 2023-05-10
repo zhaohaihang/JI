@@ -45,7 +45,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/service.LoginUserInfo"
+                            "$ref": "#/definitions/serializer.LoginUserInfo"
                         }
                     }
                 ],
@@ -93,6 +93,20 @@ const docTemplate = `{
                 },
                 "lng": {
                     "type": "number"
+                }
+            }
+        },
+        "serializer.LoginUserInfo": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
                 }
             }
         },
@@ -154,20 +168,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "xxtra": {
-                    "type": "string"
-                }
-            }
-        },
-        "service.LoginUserInfo": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                },
-                "user_name": {
                     "type": "string"
                 }
             }

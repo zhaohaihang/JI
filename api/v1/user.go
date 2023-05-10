@@ -2,8 +2,9 @@ package v1
 
 import (
 	"ji/consts"
-	"ji/service"
 	"ji/pkg/utils"
+	"ji/serializer"
+	"ji/service"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,12 +15,12 @@ import (
 // @Tags user
 // @Accept  json
 // @Produce  json
-// @Param post body service.LoginUserInfo true "user info"
+// @Param post body serializer.LoginUserInfo true "user info"
 // @Success 200 {object} serializer.Response{data=serializer.TokenData{user=serializer.User}}
 // @Router /api/v1/user/login [post]
 func UserLogin(c *gin.Context) {
 	var userLoginService service.UserService
-	var loginUserInfo service.LoginUserInfo
+	var loginUserInfo serializer.LoginUserInfo
 	if err := c.ShouldBind(&loginUserInfo); err == nil {
 		res := userLoginService.Login(c.Request.Context(),loginUserInfo)
 		c.JSON(consts.StatusOK, res)

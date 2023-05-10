@@ -16,7 +16,7 @@ type UserService struct {
 }
 
 // Login 用户登陆函数
-func (service *UserService) Login(ctx context.Context, loginUserInfo LoginUserInfo) serializer.Response {
+func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.LoginUserInfo) serializer.Response {
 	var user *model.User
 	code := e.SUCCESS
 	userDao := dao.NewUserDao(ctx)

@@ -7,6 +7,15 @@ definitions:
       lng:
         type: number
     type: object
+  serializer.LoginUserInfo:
+    properties:
+      password:
+        type: string
+      type:
+        type: integer
+      user_name:
+        type: string
+    type: object
   serializer.Response:
     properties:
       data: {}
@@ -48,15 +57,6 @@ definitions:
       xxtra:
         type: string
     type: object
-  service.LoginUserInfo:
-    properties:
-      password:
-        type: string
-      type:
-        type: integer
-      user_name:
-        type: string
-    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -85,7 +85,7 @@ paths:
         name: post
         required: true
         schema:
-          $ref: '#/definitions/service.LoginUserInfo'
+          $ref: '#/definitions/serializer.LoginUserInfo'
       produces:
       - application/json
       responses:

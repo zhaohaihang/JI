@@ -38,7 +38,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/service.LoginUserInfo"
+                            "$ref": "#/definitions/serializer.LoginUserInfo"
                         }
                     }
                 ],
@@ -86,6 +86,20 @@
                 },
                 "lng": {
                     "type": "number"
+                }
+            }
+        },
+        "serializer.LoginUserInfo": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
                 }
             }
         },
@@ -147,20 +161,6 @@
                     "type": "string"
                 },
                 "xxtra": {
-                    "type": "string"
-                }
-            }
-        },
-        "service.LoginUserInfo": {
-            "type": "object",
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
-                },
-                "user_name": {
                     "type": "string"
                 }
             }
