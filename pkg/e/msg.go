@@ -11,10 +11,11 @@ var MsgFlags = map[int]string{
 
 	ErrorAuthCheckTokenFail:        "Token鉴权失败",
 	ErrorAuthCheckTokenTimeout:     "Token已超时",
-
 	ErrorAuthToken:                 "Token生成失败",
-
+	ErrorAuthInsufficientAuthority: "权限不足",
+	
 	ErrorDatabase: "数据库操作出错,请重试",
+
 }
 
 // GetMsg 获取状态码对应信息
