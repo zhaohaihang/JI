@@ -8,9 +8,9 @@ import (
 )
 
 type LoginUserInfo struct {
-	UserName  string `form:"user_name" json:"user_name"`
-	Password  string `form:"password" json:"password"`
-    Type      int    `form:"type" json:"type"` 
+	UserName  string `form:"user_name" json:"user_name" binding:"required"`
+	Password  string `form:"password" json:"password" binding:"required"`
+    Type      int    `form:"type" json:"type" binding:"required,oneof=male female other"` 
 }
 
 type User struct {
@@ -24,7 +24,7 @@ type User struct {
 	Biography string      `json:"biography"`
 	Phone     string      `json:"phone"`
 	Location  model.Point `json:"location"`
-	Extra     string      `json:"xxtra"`
+	Extra     string      `json:"extra"`
 }
 
 // BuildUser 序列化用户

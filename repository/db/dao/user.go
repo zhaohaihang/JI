@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 	"ji/repository/db/model"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -52,9 +53,9 @@ func (userDao *UserDao) CreateUser(user *model.User) error {
 	return userDao.DB.Model(&model.User{}).Create(&user).Error
 }
 
-// UpdateLastLoginById 根据ID更新最后一次登录时间
-func (userDao *UserDao) UpdateLastLoginById(uId uint, user *model.User) (err error) {
-	return userDao.DB.Model(&model.User{}).Where("id=?", uId).Updates(user).Error
+// UpdateLastLoginById 根据ID更新最后登录时间
+func (userDao *UserDao) UpdateLastLoginById(uId uint, loginTime time.Time) (err error) {
+	return userDao.DB.Model(&model.User{}).Where("id=?", uId).Updates(&model.User{LastLogin: loginTime}).Error
 }
 
 // func GetNearestUsers(lat, lng float64) ([]User, error) {
