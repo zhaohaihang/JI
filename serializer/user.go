@@ -7,12 +7,6 @@ import (
 	// geo "github.com/kellydunn/golang-geo"
 )
 
-type LoginUserInfo struct {
-	UserName  string `form:"user_name" json:"user_name" binding:"required"`
-	Password  string `form:"password" json:"password" binding:"required"`
-    Type      int    `form:"type" json:"type" binding:"required,oneof=male female other"` 
-}
-
 type User struct {
 	ID        uint        `json:"id"`
 	UserName  string      `json:"username"`

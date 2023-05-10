@@ -98,12 +98,23 @@ const docTemplate = `{
         },
         "serializer.LoginUserInfo": {
             "type": "object",
+            "required": [
+                "password",
+                "type",
+                "user_name"
+            ],
             "properties": {
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 20,
+                    "minLength": 8
                 },
                 "type": {
-                    "type": "integer"
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        2
+                    ]
                 },
                 "user_name": {
                     "type": "string"
@@ -149,6 +160,9 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "extra": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "integer"
                 },
@@ -165,9 +179,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "username": {
-                    "type": "string"
-                },
-                "xxtra": {
                     "type": "string"
                 }
             }
