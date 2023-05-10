@@ -2,7 +2,7 @@ package loading
 
 import (
 	"ji/repository/db/dao"
-	"ji/valid"
+	"ji/pkg/valid"
 )
 
 func Init() {

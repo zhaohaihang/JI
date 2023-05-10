@@ -25,6 +25,13 @@ definitions:
     - type
     - user_name
     type: object
+  serializer.Point:
+    properties:
+      lat:
+        type: number
+      lng:
+        type: number
+    type: object
   serializer.Response:
     properties:
       data: {}
@@ -40,6 +47,24 @@ definitions:
       token:
         type: string
       user: {}
+    type: object
+  serializer.UpdateUserInfo:
+    properties:
+      address:
+        maxLength: 1000
+        type: string
+      biography:
+        maxLength: 1000
+        type: string
+      email:
+        type: string
+      extra:
+        maxLength: 1000
+        type: string
+      location:
+        $ref: '#/definitions/serializer.Point'
+      phone:
+        type: string
     type: object
   serializer.User:
     properties:
@@ -83,6 +108,38 @@ info:
   title: JI API
   version: "1.0"
 paths:
+  /api/v1/user/{id}:
+    put:
+      consumes:
+      - application/json
+      description: 用户更新信息接口
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: user update info
+        in: body
+        name: post
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.UpdateUserInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/serializer.User'
+              type: object
+      summary: 用户更新信息
+      tags:
+      - user
   /api/v1/user/login:
     post:
       consumes:

@@ -82,6 +82,59 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/user/{id}": {
+            "put": {
+                "description": "用户更新信息接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "用户更新信息",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "user id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "user update info",
+                        "name": "post",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/serializer.UpdateUserInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/serializer.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/serializer.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -121,6 +174,17 @@ const docTemplate = `{
                 }
             }
         },
+        "serializer.Point": {
+            "type": "object",
+            "properties": {
+                "lat": {
+                    "type": "number"
+                },
+                "lng": {
+                    "type": "number"
+                }
+            }
+        },
         "serializer.Response": {
             "type": "object",
             "properties": {
@@ -143,6 +207,32 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {}
+            }
+        },
+        "serializer.UpdateUserInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "biography": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "email": {
+                    "type": "string"
+                },
+                "extra": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "location": {
+                    "$ref": "#/definitions/serializer.Point"
+                },
+                "phone": {
+                    "type": "string"
+                }
             }
         },
         "serializer.User": {
