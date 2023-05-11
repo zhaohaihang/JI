@@ -42,10 +42,10 @@ func UserLogin(c *gin.Context) {
 // @Router /api/v1/user/{id} [put]
 func UserUpdate(c *gin.Context) {
 	var userUpdateService service.UserService
-	// var updateUserInfo serializer.UpdateUserInfo
+	var updateUserInfo serializer.UpdateUserInfo
 	claims, _ := utils.ParseToken(c.GetHeader("Authorization"))
 	if err := c.ShouldBind(&userUpdateService); err == nil {
-		res := userUpdateService.UpdateUserById(c.Request.Context(), claims.UserID)
+		res := userUpdateService.UpdateUserById(c.Request.Context(), claims.UserID,updateUserInfo)
 		c.JSON(consts.StatusOK, res)
 	} else {
 		c.JSON(consts.IlleageRequest, ErrorResponse(err))

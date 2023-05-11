@@ -83,7 +83,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 }
 
 // Update 用户修改信息
-func (service UserService) UpdateUserById(ctx context.Context, uId uint) serializer.Response {
+func (service UserService) UpdateUserById(ctx context.Context, uId uint,updateUserInfo serializer.UpdateUserInfo) serializer.Response {
 	var user *model.User
 	var err error
 	code := e.SUCCESS
@@ -100,9 +100,15 @@ func (service UserService) UpdateUserById(ctx context.Context, uId uint) seriali
 			Error:  err.Error(),
 		}
 	}
-
-	// user.Biography = service.Biography
-	// user.Address = service.Address
+	// 更新字段
+	user.Biography = updateUserInfo.Biography
+	user.Address = updateUserInfo.Address
+	user.Email = updateUserInfo.Address
+	user.Phone = updateUserInfo.Address
+	user.Location = model.Point{
+		Lat: updateUserInfo.Location.Lat,
+		Lng: updateUserInfo.Location.Lng,
+	}
 
 	err = userDao.UpdateUserById(uId, user)
 	if err != nil {
