@@ -5,6 +5,7 @@ import (
 	"ji/pkg/utils"
 	"ji/serializer"
 	"ji/service"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,8 +45,30 @@ func UserUpdate(c *gin.Context) {
 	var userUpdateService service.UserService
 	var updateUserInfo serializer.UpdateUserInfo
 	claims, _ := utils.ParseToken(c.GetHeader("Authorization"))
-	if err := c.ShouldBind(&userUpdateService); err == nil {
+	if err := c.ShouldBind(&updateUserInfo); err == nil {
 		res := userUpdateService.UpdateUserById(c.Request.Context(), claims.UserID, updateUserInfo)
+		c.JSON(consts.StatusOK, res)
+	} else {
+		c.JSON(consts.IlleageRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln(err)
+	}
+}
+
+// ViewUser godoc
+// @Summary 查看用户信息
+// @Description  查看用户信息接口
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param uid path int true "user ID"
+// @Success 200 {object} serializer.Response{data=serializer.User}
+// @Router /api/v1/user/{uid} [get]
+func ViewUser(c *gin.Context) {
+	var viewUserService service.UserService
+	uIdStr := c.Param("uid")
+
+	if uId, err := strconv.ParseUint(uIdStr, 10, 32); err == nil {
+		res := viewUserService.GetUserById(c.Request.Context(), uint(uId))
 		c.JSON(consts.StatusOK, res)
 	} else {
 		c.JSON(consts.IlleageRequest, ErrorResponse(err))

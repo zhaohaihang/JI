@@ -13,7 +13,6 @@ import (
 )
 
 type UserService struct {
-	
 }
 
 // Login 用户登陆函数
@@ -38,7 +37,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		user.Avatar = "avatar.jpg"
 		if loginUserInfo.Type == 0 {
 			user.Phone = loginUserInfo.UserName
-		}else {
+		} else {
 			user.Email = loginUserInfo.UserName
 		}
 		// 加密密码
@@ -73,7 +72,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		}
 	}
 
-	userDao.UpdateLastLoginById(user.ID,time.Now())
+	userDao.UpdateLastLoginById(user.ID, time.Now())
 
 	return serializer.Response{
 		Status: code,
@@ -83,7 +82,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 }
 
 // Update 用户修改信息
-func (service UserService) UpdateUserById(ctx context.Context, uId uint,updateUserInfo serializer.UpdateUserInfo) serializer.Response {
+func (service UserService) UpdateUserById(ctx context.Context, uId uint, updateUserInfo serializer.UpdateUserInfo) serializer.Response {
 	var user *model.User
 	var err error
 	code := e.SUCCESS
@@ -111,6 +110,31 @@ func (service UserService) UpdateUserById(ctx context.Context, uId uint,updateUs
 	}
 
 	err = userDao.UpdateUserById(uId, user)
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
+		Data:   serializer.BuildUser(user),
+		Msg:    e.GetMsg(code),
+	}
+}
+
+func (service UserService) GetUserById(ctx context.Context, uId uint) serializer.Response {
+	var err error
+	var user *model.User
+	code := e.SUCCESS
+	// 找到用户
+	userDao := dao.NewUserDao(ctx)
+	user, err = userDao.GetUserById(uId)
+
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase

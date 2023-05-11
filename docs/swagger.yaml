@@ -140,6 +140,32 @@ paths:
       summary: 用户更新信息
       tags:
       - user
+  /api/v1/user/{uid}:
+    get:
+      consumes:
+      - application/json
+      description: 查看用户信息接口
+      parameters:
+      - description: user ID
+        in: path
+        name: uid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/serializer.User'
+              type: object
+      summary: 查看用户信息
+      tags:
+      - user
   /api/v1/user/login:
     post:
       consumes:
