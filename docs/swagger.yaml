@@ -108,20 +108,20 @@ info:
   title: JI API
   version: "1.0"
 paths:
-  /api/v1/user/{id}:
+  /api/v1/user:
     put:
       consumes:
       - application/json
       description: 用户更新信息接口
       parameters:
-      - description: user id
-        in: path
-        name: id
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
         required: true
-        type: integer
+        type: string
       - description: user update info
         in: body
-        name: post
+        name: UpdateUserInfo
         required: true
         schema:
           $ref: '#/definitions/serializer.UpdateUserInfo'
@@ -146,9 +146,9 @@ paths:
       - application/json
       description: 用户登录接口，如果用户不存在则创建用户
       parameters:
-      - description: user info
+      - description: login user info
         in: body
-        name: post
+        name: LoginUserInfo
         required: true
         schema:
           $ref: '#/definitions/serializer.LoginUserInfo'
