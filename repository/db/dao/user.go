@@ -55,7 +55,11 @@ func (userDao *UserDao) CreateUser(user *model.User) error {
 
 // UpdateLastLoginById 根据ID更新最后登录时间
 func (userDao *UserDao) UpdateLastLoginById(uId uint, loginTime time.Time) (err error) {
-	return userDao.DB.Model(&model.User{}).Where("id=?", uId).Updates(&model.User{LastLogin: loginTime}).Error
+	return userDao.DB.Model(&model.User{}).Select("last_login").Where("id=?", uId).Updates(&model.User{LastLogin: loginTime}).Error
+}
+
+func (userDao *UserDao)UpdateUserAvatarById(uId uint,path string)(err error) {
+	return userDao.DB.Model(&model.User{}).Select("avatar").Where("id=?", uId).Updates(&model.User{Avatar: path}).Error
 }
 
 // func GetNearestUsers(lat, lng float64) ([]User, error) {

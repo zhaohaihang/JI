@@ -7,6 +7,7 @@ import (
 	"ji/repository/db/dao"
 	"ji/repository/db/model"
 	"ji/serializer"
+	"mime/multipart"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -23,7 +24,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 	user, exist, _ := userDao.ExistOrNotByUserName(loginUserInfo.UserName)
 	if exist { // 如果存在，则校验密码
 		if !user.CheckPassword(loginUserInfo.Password) {
-			code = e.ErrorNotCompare
+			code = e.ErrorPasswordNotCompare
 			return serializer.Response{
 				Status: code,
 				Msg:    e.GetMsg(code),
@@ -145,6 +146,53 @@ func (service UserService) GetUserById(ctx context.Context, uId uint) serializer
 		}
 	}
 
+	return serializer.Response{
+		Status: code,
+		Data:   serializer.BuildUser(user),
+		Msg:    e.GetMsg(code),
+	}
+}
+
+func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file multipart.File, fileSize int64) serializer.Response {
+	code := e.SUCCESS
+	var user *model.User
+	var err error
+
+	userDao := dao.NewUserDao(ctx)
+	user, err = userDao.GetUserById(uId)
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+	var path string
+	
+	path, err = utils.UploadAvatarToLocalStatic(file, uId, user.UserName)
+	
+	if err != nil {
+		code = e.ErrorUploadFile
+		return serializer.Response{
+			Status: code,
+			Data:   e.GetMsg(code),
+			Error:  path,
+		}
+	}
+
+	user.Avatar = path
+	err = userDao.UpdateUserAvatarById(uId, path)
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
 	return serializer.Response{
 		Status: code,
 		Data:   serializer.BuildUser(user),

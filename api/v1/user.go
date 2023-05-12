@@ -44,7 +44,7 @@ func UserLogin(c *gin.Context) {
 func UserUpdate(c *gin.Context) {
 	var userUpdateService service.UserService
 	var updateUserInfo serializer.UpdateUserInfo
-	claims, _ := utils.ParseToken(c.GetHeader("Authorization"))
+	claims := utils.GetClaimsFromContext(c)
 	if err := c.ShouldBind(&updateUserInfo); err == nil {
 		res := userUpdateService.UpdateUserById(c.Request.Context(), claims.UserID, updateUserInfo)
 		c.JSON(consts.StatusOK, res)
@@ -73,5 +73,29 @@ func ViewUser(c *gin.Context) {
 	} else {
 		c.JSON(consts.IlleageRequest, ErrorResponse(err))
 		utils.LogrusObj.Infoln(err)
+	}
+}
+
+// UploadUserAvatar godoc
+// @Summary 上传用户头像
+// @Description  上传用户头像接口
+// @Tags user
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param file formData file true "图片文件"
+// @Param Authorization header string true "Authorization header parameter"
+// @Success 200 {object} serializer.Response{data=serializer.User}
+// @Router /api/v1/user/avatar [post]
+func UploadUserAvatar(c *gin.Context) {
+	file, fileHeader, err := c.Request.FormFile("file")
+	if err != nil {
+		c.JSON(consts.IlleageRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln(err)
+	}else {
+		fileSize := fileHeader.Size
+		var uploadUserAvatarService  service.UserService
+		claims := utils.GetClaimsFromContext(c)
+		res := uploadUserAvatarService.UploadUserAvatar(c.Request.Context(), claims.UserID, file, fileSize)
+		c.JSON(consts.StatusOK, res)
 	}
 }

@@ -9,7 +9,7 @@ const (
 	InvalidParams         = 400
 
 	// 用户错误
-	ErrorNotCompare         = 10004
+	ErrorPasswordNotCompare = 10004
 
 	// 活动错误
 
@@ -22,5 +22,6 @@ const (
 	// //数据库错误
 	ErrorDatabase = 40001
 
-
+	// 静态资源错误
+	ErrorUploadFile = 50001
 )

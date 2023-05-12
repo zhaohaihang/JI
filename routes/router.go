@@ -30,6 +30,7 @@ func NewRouter() *gin.Engine {
 		{
 			authed.PUT("user",api.UserUpdate)
 			authed.GET("user/:uid",api.ViewUser)
+			authed.POST("user/avatar",api.UploadUserAvatar)
 		}
 	}
 	return r

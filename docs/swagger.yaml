@@ -166,6 +166,37 @@ paths:
       summary: 查看用户信息
       tags:
       - user
+  /api/v1/user/avatar:
+    post:
+      consumes:
+      - multipart/form-data
+      description: 上传用户头像接口
+      parameters:
+      - description: 图片文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/serializer.User'
+              type: object
+      summary: 上传用户头像
+      tags:
+      - user
   /api/v1/user/login:
     post:
       consumes:

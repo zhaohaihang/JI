@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/gin-gonic/gin"
 )
 
 var jwtSecret = []byte("FanOne")
@@ -22,7 +23,7 @@ func GenerateToken(id uint, username string, authority int) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(24 * time.Hour)
 	claims := Claims{
-		UserID:id,
+		UserID:    id,
 		Username:  username,
 		Authority: authority,
 		StandardClaims: jwt.StandardClaims{
@@ -51,4 +52,29 @@ func ParseToken(tokenStr string) (*Claims, error) {
 		}
 	}
 	return nil, err
+}
+
+func SetClaimsToContext(c *gin.Context, claims *Claims) {
+	if c == nil || claims == nil {
+		return
+	}
+	c.Set("claims", claims)
+}
+
+func GetClaimsFromContext(c *gin.Context) *Claims {
+	if c == nil {
+		return nil
+	}
+
+	val, ok := c.Get("claims")
+	if !ok {
+		return nil
+	}
+
+	claims, ok := val.(*Claims)
+	if !ok {
+		return nil
+	}
+
+	return claims
 }
