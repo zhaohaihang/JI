@@ -13,6 +13,7 @@ var MsgFlags = map[int]string{
 	ErrorAuthCheckTokenTimeout:     "Token已超时",
 	ErrorAuthToken:                 "Token生成失败",
 	ErrorAuthInsufficientAuthority: "权限不足",
+	ErrorTokenIsNUll: 				"未携带token数据",
 	
 	ErrorDatabase: "数据库操作出错,请重试",
 

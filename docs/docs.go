@@ -25,6 +25,59 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/api/v1/activity": {
+            "post": {
+                "description": "创建活动接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "创建活动",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization header parameter",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "activity create info",
+                        "name": "CreateActivityInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/serializer.CreateActivityInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/serializer.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/serializer.Activity"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user": {
             "put": {
                 "description": "用户更新信息接口",
@@ -241,6 +294,86 @@ const docTemplate = `{
                 },
                 "lng": {
                     "type": "number"
+                }
+            }
+        },
+        "serializer.Activity": {
+            "type": "object",
+            "properties": {
+                "current_Number": {
+                    "type": "integer"
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "expected_number": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "introduction": {
+                    "type": "string"
+                },
+                "location": {
+                    "$ref": "#/definitions/serializer.Point"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "user_avatar": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                },
+                "user_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "serializer.CreateActivityInfo": {
+            "type": "object",
+            "required": [
+                "end_time",
+                "start_time",
+                "status"
+            ],
+            "properties": {
+                "biography": {
+                    "type": "integer",
+                    "maximum": 10000
+                },
+                "end_time": {
+                    "type": "string"
+                },
+                "introduction": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "location": {
+                    "$ref": "#/definitions/serializer.Point"
+                },
+                "start_time": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer",
+                    "enum": [
+                        1,
+                        2,
+                        3
+                    ]
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 30
                 }
             }
         },

@@ -17,6 +17,7 @@ const (
 	ErrorAuthCheckTokenFail        = 30001 //token 错误
 	ErrorAuthCheckTokenTimeout     = 30002 //token 过期
 	ErrorAuthToken                 = 30003
+	ErrorTokenIsNUll			   = 30004
 	ErrorAuthInsufficientAuthority = 30005
 
 	// //数据库错误

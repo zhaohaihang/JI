@@ -6,17 +6,18 @@ import (
 	api "ji/api/v1"
 	"ji/middleware"
 
+	_ "ji/docs"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "ji/docs"
 )
 
 func NewRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Cors())
 	r.StaticFS("/static", http.Dir("../static"))
-	 
+
 	v1 := r.Group("api/v1")
 	{
 		v1.GET("/swagger/*any", func(c *gin.Context) {
@@ -28,9 +29,11 @@ func NewRouter() *gin.Engine {
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.JWT())
 		{
-			authed.PUT("user",api.UserUpdate)
-			authed.GET("user/:uid",api.ViewUser)
-			authed.POST("user/avatar",api.UploadUserAvatar)
+			authed.PUT("user", api.UserUpdate)
+			authed.GET("user/:uid", api.ViewUser)
+			authed.POST("user/avatar", api.UploadUserAvatar)
+
+			authed.POST("activity", api.CreateActivity)
 		}
 	}
 	return r

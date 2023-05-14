@@ -7,6 +7,61 @@ definitions:
       lng:
         type: number
     type: object
+  serializer.Activity:
+    properties:
+      current_Number:
+        type: integer
+      end_time:
+        type: string
+      expected_number:
+        type: integer
+      id:
+        type: integer
+      introduction:
+        type: string
+      location:
+        $ref: '#/definitions/serializer.Point'
+      start_time:
+        type: string
+      status:
+        type: integer
+      title:
+        type: string
+      user_avatar:
+        type: string
+      user_id:
+        type: integer
+      user_name:
+        type: string
+    type: object
+  serializer.CreateActivityInfo:
+    properties:
+      biography:
+        maximum: 10000
+        type: integer
+      end_time:
+        type: string
+      introduction:
+        maxLength: 1000
+        type: string
+      location:
+        $ref: '#/definitions/serializer.Point'
+      start_time:
+        type: string
+      status:
+        enum:
+        - 1
+        - 2
+        - 3
+        type: integer
+      title:
+        maxLength: 30
+        type: string
+    required:
+    - end_time
+    - start_time
+    - status
+    type: object
   serializer.LoginUserInfo:
     properties:
       password:
@@ -108,6 +163,38 @@ info:
   title: JI API
   version: "1.0"
 paths:
+  /api/v1/activity:
+    post:
+      consumes:
+      - application/json
+      description: 创建活动接口
+      parameters:
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: activity create info
+        in: body
+        name: CreateActivityInfo
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.CreateActivityInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/serializer.Activity'
+              type: object
+      summary: 创建活动
+      tags:
+      - activity
   /api/v1/user:
     put:
       consumes:

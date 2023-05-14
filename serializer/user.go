@@ -4,7 +4,6 @@ import (
 	"ji/config"
 	"ji/repository/db/model"
 	"time"
-	// geo "github.com/kellydunn/golang-geo"
 )
 
 type User struct {
@@ -25,7 +24,7 @@ type User struct {
 func BuildUser(user *model.User) *User {
 	u := &User{
 		ID:        user.ID,
-		UserName:  user.UserName,  
+		UserName:  user.UserName,
 		Email:     user.Email,
 		Status:    user.Status,
 		LastLogin: user.LastLogin,
@@ -34,7 +33,7 @@ func BuildUser(user *model.User) *User {
 		Biography: user.Address,
 		Phone:     user.Phone,
 		Location:  user.Location,
-		Extra: 	   user.Extra,
+		Extra:     user.Extra,
 	}
 
 	return u
