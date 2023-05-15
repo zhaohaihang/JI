@@ -23,8 +23,9 @@ func NewRouter() *gin.Engine {
 		v1.GET("/swagger/*any", func(c *gin.Context) {
 			ginSwagger.DisablingWrapHandler(swaggerFiles.Handler, "SWAGGER")(c)
 		})
-		// 用户操作
+		
 		v1.POST("user/login", api.UserLogin)
+		v1.GET("activity/:aid",api.ShowActivity)
 
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.JWT())

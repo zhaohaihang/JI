@@ -195,6 +195,32 @@ paths:
       summary: 创建活动
       tags:
       - activity
+  /api/v1/activity/{aid}:
+    get:
+      consumes:
+      - application/json
+      description: 查看用户详情接口
+      parameters:
+      - description: activity ID
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/serializer.User'
+              type: object
+      summary: 查看活动详情
+      tags:
+      - activity
   /api/v1/user:
     put:
       consumes:

@@ -78,6 +78,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/activity/{aid}": {
+            "get": {
+                "description": "查看用户详情接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "查看活动详情",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "activity ID",
+                        "name": "aid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/serializer.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/serializer.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/user": {
             "put": {
                 "description": "用户更新信息接口",

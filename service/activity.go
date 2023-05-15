@@ -58,3 +58,22 @@ func (service *ActivityService) CreateActivity(ctx context.Context, uId uint, ac
 		Msg:    e.GetMsg(code),
 	}
 }
+
+func (service *ActivityService) GetActivityById(ctx context.Context, aId uint) serializer.Response {
+	code := e.SUCCESS
+	activityDao := dao.NewActivityDao(ctx)
+	activity, err := activityDao.GetActivityById(aId)
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+	return serializer.Response{
+		Status: code,
+		Data:   serializer.BuildActivity(activity),
+		Msg:    e.GetMsg(code),
+	}
+}
