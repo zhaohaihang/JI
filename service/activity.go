@@ -77,3 +77,18 @@ func (service *ActivityService) GetActivityById(ctx context.Context, aId uint) s
 		Msg:    e.GetMsg(code),
 	}
 }
+
+func (service *ActivityService) ListActivityByUserId(ctx context.Context, uId uint, basePage serializer.BasePage) serializer.Response {
+	code := e.SUCCESS
+	activityDao := dao.NewActivityDao(ctx)
+	activitys, total, err := activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
+}

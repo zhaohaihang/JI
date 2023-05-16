@@ -112,7 +112,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/serializer.User"
+                                            "$ref": "#/definitions/serializer.Activity"
                                         }
                                     }
                                 }
@@ -327,6 +327,79 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/v1/user/{uid}/activity": {
+            "get": {
+                "description": "根据用户ID查看活动接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "查看指定用户创建的所有活动",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "page num",
+                        "name": "page_num",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "page size",
+                        "name": "page_size",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "user ID",
+                        "name": "uid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/serializer.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/serializer.DataList"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "item": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/serializer.Activity"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -418,6 +491,15 @@ const docTemplate = `{
                 "title": {
                     "type": "string",
                     "maxLength": 30
+                }
+            }
+        },
+        "serializer.DataList": {
+            "type": "object",
+            "properties": {
+                "item": {},
+                "total": {
+                    "type": "integer"
                 }
             }
         },

@@ -62,6 +62,12 @@ definitions:
     - start_time
     - status
     type: object
+  serializer.DataList:
+    properties:
+      item: {}
+      total:
+        type: integer
+    type: object
   serializer.LoginUserInfo:
     properties:
       password:
@@ -216,7 +222,7 @@ paths:
             - $ref: '#/definitions/serializer.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/serializer.User'
+                  $ref: '#/definitions/serializer.Activity'
               type: object
       summary: 查看活动详情
       tags:
@@ -279,6 +285,49 @@ paths:
       summary: 查看用户信息
       tags:
       - user
+  /api/v1/user/{uid}/activity:
+    get:
+      consumes:
+      - application/json
+      description: 根据用户ID查看活动接口
+      parameters:
+      - description: page num
+        in: query
+        name: page_num
+        required: true
+        type: integer
+      - description: page size
+        in: query
+        name: page_size
+        required: true
+        type: integer
+      - description: user ID
+        in: path
+        name: uid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/serializer.DataList'
+                  - properties:
+                      item:
+                        items:
+                          $ref: '#/definitions/serializer.Activity'
+                        type: array
+                    type: object
+              type: object
+      summary: 查看指定用户创建的所有活动
+      tags:
+      - activity
   /api/v1/user/avatar:
     post:
       consumes:
