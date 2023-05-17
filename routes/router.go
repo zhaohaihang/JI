@@ -28,6 +28,7 @@ func NewRouter() *gin.Engine {
 		v1.GET("user/:uid/activitys", api.ListUserActivity)
 
 		v1.GET("activity/:aid", api.ShowActivity)
+		v1.GET("activity/near", api.ListNearActivity)
 
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.JWT())

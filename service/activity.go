@@ -92,3 +92,18 @@ func (service *ActivityService) ListActivityByUserId(ctx context.Context, uId ui
 	}
 	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
 }
+
+func (service *ActivityService) ListNearActivity(ctx context.Context, nearInfo serializer.NearInfo) serializer.Response {
+	code := e.SUCCESS
+	activityDao := dao.NewActivityDao(ctx)
+	activitys, total, err := activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
+}

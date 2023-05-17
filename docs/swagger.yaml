@@ -227,6 +227,49 @@ paths:
       summary: 查看活动详情
       tags:
       - activity
+  /api/v1/activity/near:
+    get:
+      consumes:
+      - application/json
+      description: 根据位置和半径查看活动接口
+      parameters:
+      - description: lat
+        in: query
+        name: lat
+        required: true
+        type: integer
+      - description: lng
+        in: query
+        name: lng
+        required: true
+        type: integer
+      - description: rad
+        in: query
+        name: rad
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/serializer.DataList'
+                  - properties:
+                      item:
+                        items:
+                          $ref: '#/definitions/serializer.Activity'
+                        type: array
+                    type: object
+              type: object
+      summary: 查看指定点周围的所有活动
+      tags:
+      - activity
   /api/v1/user:
     put:
       consumes:

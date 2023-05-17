@@ -47,10 +47,16 @@ func (activityDao *ActivityDao) ListActivityByUserId(uId uint, page model.BasePa
 	return
 }
 
-func (activityDao *ActivityDao) ListNearActivity(lat, lng, radius float64) (activitys []*model.Activity, err error) {
+func (activityDao *ActivityDao) ListNearActivity(lat, lng float64, radius int) (activitys []*model.Activity, total int64, err error) {
 	pointSql := fmt.Sprintf("POINT(%.6f %.6f),4326", lat, lng)
 
-	err = activityDao.DB.Where("ST_Distance_Sphere(location, ST_PointFromText(?)) < ?", pointSql, radius).
+	err = activityDao.DB.Model(&model.Activity{}).Where("ST_Distance_Sphere(location, ST_PointFromText(?)) < ?", pointSql, radius).
+		Count(&total).Error
+	if err != nil {
+		return
+	}
+
+	err = activityDao.DB.Model(&model.Activity{}).Where("ST_Distance_Sphere(location, ST_PointFromText(?)) < ?", pointSql, radius).
 		Order("ST_Distance_Sphere(location, ST_PointFromText(" + pointSql + ")) DESC").Find(&activitys).Error
 
 	return

@@ -79,3 +79,25 @@ func ListUserActivity(c *gin.Context) {
 		utils.LogrusObj.Infoln(err)
 	}
 }
+
+// ListNearActivity godoc
+// @Summary 查看指定点周围的所有活动
+// @Description  根据位置和半径查看活动接口
+// @Tags activity
+// @Accept  json
+// @Produce  json
+// @Param lat query int true "lat"
+// @Param lng query int true "lng"
+// @Param rad query int true "rad"
+// @Success 200 {object} serializer.Response{data=serializer.DataList{item=[]serializer.Activity}}
+// @Router /api/v1/activity/near [get]
+func ListNearActivity(c *gin.Context) {
+	var listNearActivityService service.ActivityService
+	var nearInfo serializer.NearInfo
+	if err := c.ShouldBindQuery(nearInfo); err == nil {
+		listNearActivityService.ListNearActivity(c.Request.Context(), nearInfo)
+	} else {
+		c.JSON(consts.IlleageRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln(err)
+	}
+}

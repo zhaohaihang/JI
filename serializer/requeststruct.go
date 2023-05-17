@@ -35,3 +35,8 @@ type CreateActivityInfo struct {
 	Location       Point     `form:"location" json:"location"`
 	ExpectedNumber uint      `form:"biography" json:"biography" binding:"lte=10000"`
 }
+
+type NearInfo struct {
+	Point
+	Rad int     `form:"rad" json:"rad" binding:"lte=100"`
+}
