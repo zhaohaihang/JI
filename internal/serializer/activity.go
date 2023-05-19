@@ -1,7 +1,7 @@
 package serializer
 
 import (
-	"ji/repository/db/model"
+	"ji/internal/model"
 	"time"
 )
 

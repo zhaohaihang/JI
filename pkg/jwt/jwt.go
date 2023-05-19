@@ -1,13 +1,16 @@
-package utils
+package jwt
 
 import (
 	"fmt"
+	"ji/pkg/e"
 	"strings"
-	"time"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+
+	"time"
 )
+
 
 var jwtSecret = []byte("FanOne")
 
@@ -54,14 +57,14 @@ func ParseToken(tokenStr string) (*Claims, error) {
 	return nil, err
 }
 
-func SetClaimsToContext(c *gin.Context, claims *Claims) {
+func SetTokenClaimsToContext(c *gin.Context, claims *Claims) {
 	if c == nil || claims == nil {
 		return
 	}
 	c.Set("claims", claims)
 }
 
-func GetClaimsFromContext(c *gin.Context) *Claims {
+func GetTokenClaimsFromContext(c *gin.Context) *Claims {
 	if c == nil {
 		return nil
 	}
@@ -77,4 +80,36 @@ func GetClaimsFromContext(c *gin.Context) *Claims {
 	}
 
 	return claims
+}
+
+//JWT token验证中间件
+func JWT() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var code int
+		var data interface{}
+		code = 200
+		token := c.GetHeader("Authorization")
+		var claims *Claims
+		if token == "" {
+			code = e.ErrorTokenIsNUll
+		} else {
+			claims, err := ParseToken(token)
+			if err != nil {
+				code = e.ErrorAuthCheckTokenFail
+			} else if time.Now().Unix() > claims.ExpiresAt {
+				code = e.ErrorAuthCheckTokenTimeout
+			}
+		}
+		if code != e.SUCCESS {
+			c.JSON(200, gin.H{
+				"status": code,
+				"msg":    e.GetMsg(code),
+				"data":   data,
+			})
+			c.Abort()
+			return
+		}
+		SetTokenClaimsToContext(c, claims)
+		c.Next()
+	}
 }

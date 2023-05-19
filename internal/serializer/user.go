@@ -1,8 +1,7 @@
 package serializer
 
 import (
-	"ji/config"
-	"ji/repository/db/model"
+	"ji/internal/model"
 	"time"
 )
 
@@ -28,7 +27,7 @@ func BuildUser(user *model.User) *User {
 		Email:     user.Email,
 		Status:    user.Status,
 		LastLogin: user.LastLogin,
-		Avatar:    config.Conf.Static.StaticHost + config.Conf.Static.StaticPort + config.Conf.Static.AvatarPath + user.AvatarURL(),
+		Avatar:    user.Avatar,
 		Address:   user.Address,
 		Biography: user.Address,
 		Phone:     user.Phone,

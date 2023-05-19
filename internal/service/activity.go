@@ -2,24 +2,36 @@ package service
 
 import (
 	"context"
+	"ji/internal/dao"
+	"ji/internal/model"
+	"ji/internal/serializer"
 	"ji/pkg/e"
-	"ji/repository/db/dao"
-	"ji/repository/db/model"
-	"ji/serializer"
 
+	"github.com/google/wire"
 	"github.com/sirupsen/logrus"
 )
 
 type ActivityService struct {
+	userDao     *dao.UserDao
+	activityDao *dao.ActivityDao
 }
+
+func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao) *ActivityService {
+	return &ActivityService{
+		userDao:     ud,
+		activityDao: ad,
+	}
+}
+
+var ActivityServiceProviderSet = wire.NewSet(NewActivityService)
 
 func (service *ActivityService) CreateActivity(ctx context.Context, uId uint, activityInfo serializer.CreateActivityInfo) serializer.Response {
 
 	code := e.SUCCESS
-	activityDao := dao.NewActivityDao(ctx)
-	userDao := dao.NewUserDao(ctx)
+	// activityDao := dao.NewActivityDao(ctx)
+	// userDao := dao.NewUserDao(ctx)
 
-	user, err := userDao.GetUserById(uId)
+	user, err := service.userDao.GetUserById(uId)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -43,7 +55,7 @@ func (service *ActivityService) CreateActivity(ctx context.Context, uId uint, ac
 		UserAvatar:     user.Avatar,
 	}
 
-	if err := activityDao.CreateActivity(activity); err != nil {
+	if err := service.activityDao.CreateActivity(activity); err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
@@ -61,8 +73,8 @@ func (service *ActivityService) CreateActivity(ctx context.Context, uId uint, ac
 
 func (service *ActivityService) GetActivityById(ctx context.Context, aId uint) serializer.Response {
 	code := e.SUCCESS
-	activityDao := dao.NewActivityDao(ctx)
-	activity, err := activityDao.GetActivityById(aId)
+	// activityDao := dao.NewActivityDao(ctx)
+	activity, err := service.activityDao.GetActivityById(aId)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -80,8 +92,8 @@ func (service *ActivityService) GetActivityById(ctx context.Context, aId uint) s
 
 func (service *ActivityService) ListActivityByUserId(ctx context.Context, uId uint, basePage serializer.BasePage) serializer.Response {
 	code := e.SUCCESS
-	activityDao := dao.NewActivityDao(ctx)
-	activitys, total, err := activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
+	// activityDao := dao.NewActivityDao(ctx)
+	activitys, total, err := service.activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -95,8 +107,8 @@ func (service *ActivityService) ListActivityByUserId(ctx context.Context, uId ui
 
 func (service *ActivityService) ListNearActivity(ctx context.Context, nearInfo serializer.NearInfo) serializer.Response {
 	code := e.SUCCESS
-	activityDao := dao.NewActivityDao(ctx)
-	activitys, total, err := activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
+	// activityDao := dao.NewActivityDao(ctx)
+	activitys, total, err := service.activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase

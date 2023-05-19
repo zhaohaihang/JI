@@ -1,11 +1,5 @@
 package main
 
-import (
-	"ji/config"
-	"ji/loading"
-	"ji/routes"
-)
-
 // @title JI API
 // @version 1.0
 // @description The api docs of JI project
@@ -26,8 +20,12 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	config.LoadConfig()
-	loading.Init()
-	r := routes.NewRouter()
-	_ = r.Run(config.Conf.Server.ServerPort)
+	server, err := CreateServer()
+	if err != nil {
+		panic(err)
+	}
+	if err = server.Start() ;err != nil {
+		panic(err)
+	}
+	server.AwaitSignal()
 }

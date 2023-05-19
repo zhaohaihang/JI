@@ -1,4 +1,4 @@
-package utils
+package localstroage
 
 import (
 	"io/ioutil"
@@ -7,12 +7,26 @@ import (
 	"mime/multipart"
 	"os"
 	"strconv"
+
+	"github.com/google/wire"
 )
 
+type LocalStroage struct {
+	config *config.Config
+}
+
+func NewLocalStroage(c *config.Config) *LocalStroage {
+	return &LocalStroage{
+		config: c,
+	}
+}
+
+var LocalStroageProviderSet = wire.NewSet(NewLocalStroage)
+
 // UploadAvatarToLocalStatic 上传头像
-func UploadAvatarToLocalStatic(file multipart.File, userId uint, userName string) (filePath string, err error) {
+func (l *LocalStroage)UploadAvatarToLocalStatic(file multipart.File, userId uint, userName string) (filePath string, err error) {
 	bId := strconv.Itoa(int(userId))
-	basePath := "." + config.Conf.Static.AvatarPath + "user" + bId + "/"
+	basePath := "." + l.config.Static.AvatarPath + "user" + bId + "/"
 	if !DirExistOrNot(basePath) {
 		CreateDir(basePath)
 	}

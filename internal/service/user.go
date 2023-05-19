@@ -2,26 +2,41 @@ package service
 
 import (
 	"context"
+	"ji/internal/dao"
+	"ji/internal/model"
+	"ji/internal/serializer"
 	"ji/pkg/e"
-	"ji/pkg/utils"
-	"ji/repository/db/dao"
-	"ji/repository/db/model"
-	"ji/serializer"
+	"ji/pkg/jwt"
+	"ji/pkg/storages/localstroage"
+
 	"mime/multipart"
 	"time"
 
+	"github.com/google/wire"
 	"github.com/sirupsen/logrus"
 )
 
 type UserService struct {
+	userDao      *dao.UserDao
+	activityDao  *dao.ActivityDao
+	localstroage *localstroage.LocalStroage
 }
+
+func NewUserService(ud *dao.UserDao, ad *dao.ActivityDao) *UserService {
+	return &UserService{
+		userDao:     ud,
+		activityDao: ad,
+	}
+}
+
+var UserServiceProviderSet = wire.NewSet(NewUserService)
 
 // Login 用户登陆函数
 func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.LoginUserInfo) serializer.Response {
 	var user *model.User
 	code := e.SUCCESS
-	userDao := dao.NewUserDao(ctx)
-	user, exist, _ := userDao.ExistOrNotByUserName(loginUserInfo.UserName)
+	// userDao := dao.NewUserDao(ctx)
+	user, exist, _ := service.userDao.ExistOrNotByUserName(loginUserInfo.UserName)
 	if exist { // 如果存在，则校验密码
 		if !user.CheckPassword(loginUserInfo.Password) {
 			code = e.ErrorPasswordNotCompare
@@ -51,7 +66,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 			}
 		}
 		// 创建用户
-		if err := userDao.CreateUser(user); err != nil {
+		if err := service.userDao.CreateUser(user); err != nil {
 			logrus.Info(err)
 			code = e.ErrorDatabase
 			return serializer.Response{
@@ -63,7 +78,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		user.LastLogin = time.Now()
 	}
 
-	token, err := utils.GenerateToken(user.ID, loginUserInfo.UserName, 0)
+	token, err := jwt.GenerateToken(user.ID, loginUserInfo.UserName, 0)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorAuthToken
@@ -73,7 +88,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		}
 	}
 
-	userDao.UpdateLastLoginById(user.ID, time.Now())
+	service.userDao.UpdateLastLoginById(user.ID, time.Now())
 
 	return serializer.Response{
 		Status: code,
@@ -88,8 +103,8 @@ func (service UserService) UpdateUserById(ctx context.Context, uId uint, updateU
 	var err error
 	code := e.SUCCESS
 	// 找到用户
-	userDao := dao.NewUserDao(ctx)
-	user, err = userDao.GetUserById(uId)
+	// userDao := dao.NewUserDao(ctx)
+	user, err = service.userDao.GetUserById(uId)
 
 	if err != nil {
 		logrus.Info(err)
@@ -110,7 +125,7 @@ func (service UserService) UpdateUserById(ctx context.Context, uId uint, updateU
 		Lng: updateUserInfo.Location.Lng,
 	}
 
-	err = userDao.UpdateUserById(uId, user)
+	err = service.userDao.UpdateUserById(uId, user)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -133,8 +148,8 @@ func (service UserService) GetUserById(ctx context.Context, uId uint) serializer
 	var user *model.User
 	code := e.SUCCESS
 	// 找到用户
-	userDao := dao.NewUserDao(ctx)
-	user, err = userDao.GetUserById(uId)
+	// userDao := dao.NewUserDao(ctx)
+	user, err = service.userDao.GetUserById(uId)
 
 	if err != nil {
 		logrus.Info(err)
@@ -158,8 +173,8 @@ func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file
 	var user *model.User
 	var err error
 
-	userDao := dao.NewUserDao(ctx)
-	user, err = userDao.GetUserById(uId)
+	// userDao := dao.NewUserDao(ctx)
+	user, err = service.userDao.GetUserById(uId)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -170,9 +185,9 @@ func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file
 		}
 	}
 	var path string
-	
-	path, err = utils.UploadAvatarToLocalStatic(file, uId, user.UserName)
-	
+
+	path, err = service.localstroage.UploadAvatarToLocalStatic(file, uId, user.UserName)
+
 	if err != nil {
 		code = e.ErrorUploadFile
 		return serializer.Response{
@@ -183,7 +198,7 @@ func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file
 	}
 
 	user.Avatar = path
-	err = userDao.UpdateUserAvatarById(uId, path)
+	err = service.userDao.UpdateUserAvatarById(uId, path)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase

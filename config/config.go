@@ -4,10 +4,12 @@ import (
 	"fmt"
 
 	"github.com/BurntSushi/toml"
+	"github.com/google/wire"
 )
 
 type ServerConf struct {
 	RunMode    string `flag:"run_mode" toml:"run_mode" json:"run_mode"`
+	ServerHost string `flag:"server_host" toml:"server_host" json:"server_host"`
 	ServerPort string `flag:"server_port" toml:"server_port" json:"server_port"`
 }
 
@@ -29,28 +31,42 @@ type RedisConf struct {
 
 type StaticConf struct {
 	StaticHost string `flag:"static_host" toml:"static_host" json:"static_host"`
-	StaticPort  string `flag:"static_port" toml:"static_port" json:"static_port"`
-	AvatarPath string  `flag:"avatar_path" toml:"avatar_path" json:"avatar_path"`
+	StaticPort string `flag:"static_port" toml:"static_port" json:"static_port"`
+	AvatarPath string `flag:"avatar_path" toml:"avatar_path" json:"avatar_path"`
 }
 
 type Config struct {
 	Server ServerConf `flag:"server" toml:"server" json:"server"`
 	Mysql  MysqlConf  `flag:"mysql" toml:"mysql" json:"mysql"`
 	Redis  RedisConf  `flag:"redis" toml:"redis" json:"redis"`
-	Static   StaticConf  `flag:"static" toml:"static" json:"static"`
+	Static StaticConf `flag:"static" toml:"static" json:"static"`
 }
 
-var Conf = Config{}
+// var Conf = Config{}
 
-const (
-	CONFIG_FILE = "../config/ji.conf"
-)
+// const (
+// 	CONFIG_FILE = "../config/ji.conf"
+// )
 
-func LoadConfig() {
+// func LoadConfig() {
+// 	_, err := toml.DecodeFile(CONFIG_FILE, &Conf)
+// 	if err != nil {
+// 		fmt.Println("config file load failed ,please check the file path:", err)
+// 		panic(err)
+// 	}
+// 	fmt.Printf("config file load success,the content is :%v ", Conf)
+// }
+
+func NewConfig() *Config {
+	var Conf Config
+	CONFIG_FILE := "../config/ji.conf"
 	_, err := toml.DecodeFile(CONFIG_FILE, &Conf)
 	if err != nil {
 		fmt.Println("config file load failed ,please check the file path:", err)
 		panic(err)
 	}
 	fmt.Printf("config file load success,the content is :%v ", Conf)
+	return &Conf
 }
+
+var ConfigProviderSet = wire.NewSet(NewConfig)

@@ -1,4 +1,4 @@
-package utils
+package logger
 
 import (
 	"log"
@@ -6,18 +6,17 @@ import (
 	"path"
 	"time"
 
+	"github.com/google/wire"
 	"github.com/sirupsen/logrus"
 )
 
-var LogrusObj *logrus.Logger
+type Logger struct{
+	Logrus *logrus.Logger
+}
 
-func InitLog() {
-	if LogrusObj != nil {
-		src, _ := setOutputFile()
-		// 设置输出
-		LogrusObj.Out = src
-		return
-	}
+func NewLogger() *Logger {
+
+	var log Logger
 	// 实例化
 	logger := logrus.New()
 	src, _ := setOutputFile()
@@ -29,16 +28,11 @@ func InitLog() {
 	logger.SetFormatter(&logrus.TextFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
-	/*
-		加个hook形成ELK体系
-		但是考虑到一些同学一下子接受不了那么多技术栈，
-		所以这里的ELK体系加了注释，如果想引入可以直接注释去掉，
-		如果不想引入这样注释掉也是没问题的。
-	*/
-	// hook := es.EsHookLog()
-	// logger.AddHook(hook)
-	LogrusObj = logger
+	log.Logrus = logger
+	return &log
 }
+
+var LoggerProviderSet = wire.NewSet(NewLogger)
 
 func setOutputFile() (*os.File, error) {
 	now := time.Now()

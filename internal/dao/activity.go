@@ -1,20 +1,25 @@
 package dao
 
 import (
-	"context"
 	"fmt"
-	"ji/repository/db/model"
+	"ji/internal/model"
+	"ji/pkg/database"
 
+	"github.com/google/wire"
 	"gorm.io/gorm"
 )
 
 type ActivityDao struct {
-	*gorm.DB
+	DB *gorm.DB
 }
 
-func NewActivityDao(ctx context.Context) *ActivityDao {
-	return &ActivityDao{NewDBClient(ctx)}
+func NewActivityDao(db *database.Database) *ActivityDao {
+	return &ActivityDao{
+		DB: db.Mysql,
+	}
 }
+
+var ActivityDaoProviderSet = wire.NewSet(NewActivityDao)
 
 func (activityDao *ActivityDao) CreateActivity(activity *model.Activity) error {
 	return activityDao.DB.Model(&model.Activity{}).Create(&activity).Error

@@ -403,7 +403,7 @@ const docTemplate = `{
         },
         "/api/v1/user/{uid}/activity": {
             "get": {
-                "description": "根据用户ID查看活动接口",
+                "description": "根据用户ID查看该用户创建的活动",
                 "consumes": [
                     "application/json"
                 ],
@@ -411,7 +411,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "activity"
+                    "user"
                 ],
                 "summary": "查看指定用户创建的所有活动",
                 "parameters": [

@@ -1,12 +1,15 @@
-package dao
+package database
 
 import (
-	"context"
+	"fmt"
+	"ji/config"
+	"ji/internal/model"
+	"os"
 	"strings"
 	"time"
-	"ji/config"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/wire"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -14,16 +17,18 @@ import (
 	"gorm.io/plugin/dbresolver"
 )
 
-var (
-	_db *gorm.DB
-)
+type Database struct {
+	Mysql *gorm.DB
+}
 
-func InitMySQL() {
-	dbUser := config.Conf.Mysql.DbUser
-	dbPassWord := config.Conf.Mysql.DbPassWord
-	dbHost := config.Conf.Mysql.DbHost
-	dbPort := config.Conf.Mysql.DbPort
-	dbName := config.Conf.Mysql.DbName
+func NewDatabase(config *config.Config) *Database {
+	dbUser := config.Mysql.DbUser
+	dbPassWord := config.Mysql.DbPassWord
+	dbHost := config.Mysql.DbHost
+	dbPort := config.Mysql.DbPort
+	dbName := config.Mysql.DbName
+
+	var database Database
 
 	pathRead := strings.Join([]string{dbUser, ":", dbPassWord, "@tcp(", dbHost, ":", dbPort, ")/", dbName, "?charset=utf8&parseTime=true"}, "")
 	pathWrite := strings.Join([]string{dbUser, ":", dbPassWord, "@tcp(", dbHost, ":", dbPort, ")/", dbName, "?charset=utf8&parseTime=true"}, "")
@@ -54,18 +59,26 @@ func InitMySQL() {
 	sqlDB.SetMaxIdleConns(20)  // 设置连接池，空闲
 	sqlDB.SetMaxOpenConns(100) // 打开
 	sqlDB.SetConnMaxLifetime(time.Second * 30)
-	_db = db
-	_ = _db.Use(dbresolver.
+	database.Mysql = db
+	_ = database.Mysql.Use(dbresolver.
 		Register(dbresolver.Config{
 			// `db2` 作为 sources，`db3`、`db4` 作为 replicas
 			Sources:  []gorm.Dialector{mysql.Open(pathRead)},                         // 写操作
 			Replicas: []gorm.Dialector{mysql.Open(pathWrite), mysql.Open(pathWrite)}, // 读操作
 			Policy:   dbresolver.RandomPolicy{},                                      // sources/replicas 负载均衡策略
 		}))
-	Migration()
+	err = database.Mysql.Set("gorm:table_options", "charset=utf8mb4").
+		AutoMigrate(
+			&model.User{},
+			&model.Activity{},
+		)
+	if err != nil {
+		fmt.Println("register table fail")
+		os.Exit(0)
+	}
+	fmt.Println("register table success")
+	return &database
+
 }
 
-func NewDBClient(ctx context.Context) *gorm.DB {
-	db := _db
-	return db.WithContext(ctx)
-}
+var DatabaseProviderSet = wire.NewSet(NewDatabase)

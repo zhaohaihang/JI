@@ -1,20 +1,25 @@
 package dao
 
 import (
-	"context"
-	"ji/repository/db/model"
+	"ji/internal/model"
+	"ji/pkg/database"
 	"time"
 
+	"github.com/google/wire"
 	"gorm.io/gorm"
 )
 
 type UserDao struct {
-	*gorm.DB
+	DB *gorm.DB
 }
 
-func NewUserDao(ctx context.Context) *UserDao {
-	return &UserDao{NewDBClient(ctx)}
+func NewUserDao(db *database.Database) *UserDao {
+	return &UserDao{
+		DB: db.Mysql,
+	}
 }
+
+var UserDaoProviderSet = wire.NewSet(NewUserDao)
 
 func NewUserDaoByDB(db *gorm.DB) *UserDao {
 	return &UserDao{db}
@@ -58,7 +63,7 @@ func (userDao *UserDao) UpdateLastLoginById(uId uint, loginTime time.Time) (err 
 	return userDao.DB.Model(&model.User{}).Select("last_login").Where("id=?", uId).Updates(&model.User{LastLogin: loginTime}).Error
 }
 
-func (userDao *UserDao)UpdateUserAvatarById(uId uint,path string)(err error) {
+func (userDao *UserDao) UpdateUserAvatarById(uId uint, path string) (err error) {
 	return userDao.DB.Model(&model.User{}).Select("avatar").Where("id=?", uId).Updates(&model.User{Avatar: path}).Error
 }
 
