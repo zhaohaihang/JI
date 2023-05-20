@@ -1,6 +1,8 @@
 package serializer
 
-import "time"
+import (
+	"ji/pkg/utils/datetime"
+)
 
 type BasePage struct {
 	PageNum  int `form:"page_num" json:"page_num"`
@@ -27,13 +29,13 @@ type UpdateUserInfo struct {
 }
 
 type CreateActivityInfo struct {
-	Title          string    `form:"title" json:"title" binding:"max=30"`
-	Introduction   string    `form:"introduction" json:"introduction" binding:"max=1000"`
-	Status         int       `form:"status" json:"status" binding:"required,oneof=1 2 3"`
-	StartTime      time.Time `form:"start_time" json:"start_time" binding:"required,datetime=2006-01-02"`
-	EndTime        time.Time `form:"end_time" json:"end_time" binding:"required,datetime=2006-01-02"`
-	Location       Point     `form:"location" json:"location"`
-	ExpectedNumber uint      `form:"expected_number" json:"expected_number" `
+	Title          string            `form:"title" json:"title" binding:"max=30"`
+	Introduction   string            `form:"introduction" json:"introduction" binding:"max=1000"`
+	Status         int               `form:"status" json:"status" binding:"required,oneof=1 2 3"`
+	StartTime      datetime.DateTime `form:"start_time" json:"start_time" time_format:"2006-01-02 15:04:05" binding:"required"`
+	EndTime        datetime.DateTime `form:"end_time" json:"end_time" time_format:"2006-01-02 15:04:05" binding:"required"`
+	Location       Point             `form:"location" json:"location"`
+	ExpectedNumber uint              `form:"expected_number" json:"expected_number" `
 }
 
 type NearInfo struct {

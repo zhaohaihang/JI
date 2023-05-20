@@ -2,22 +2,22 @@ package serializer
 
 import (
 	"ji/internal/model"
-	"time"
+	"ji/pkg/utils/datetime"
 )
 
 type Activity struct {
-	ID             uint      `json:"id"`
-	Title          string    `json:"title"`
-	Introduction   string    `json:"introduction"`
-	Status         int       `json:"status"`
-	StartTime      time.Time `json:"start_time"`
-	EndTime        time.Time `json:"end_time"`
-	Location       Point     `json:"location"`
-	ExpectedNumber uint      `json:"expected_number"`
-	CurrentNumber  uint      `json:"current_Number"`
-	UserId         uint      `json:"user_id"`
-	UserName       string    `json:"user_name"`
-	UserAvatar     string    `json:"user_avatar"`
+	ID             uint              `json:"id"`
+	Title          string            `json:"title"`
+	Introduction   string            `json:"introduction"`
+	Status         int               `json:"status"`
+	StartTime      datetime.DateTime `json:"start_time"`
+	EndTime        datetime.DateTime `json:"end_time"`
+	Location       Point             `json:"location"`
+	ExpectedNumber uint              `json:"expected_number"`
+	CurrentNumber  uint              `json:"current_Number"`
+	UserId         uint              `json:"user_id"`
+	UserName       string            `json:"user_name"`
+	UserAvatar     string            `json:"user_avatar"`
 }
 
 // BuildUser 序列化用户

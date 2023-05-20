@@ -16,14 +16,14 @@ import (
 type ActivityService struct {
 	userDao     *dao.UserDao
 	activityDao *dao.ActivityDao
-	redisPool        *redis.Pool
+	redisPool   *redis.Pool
 }
 
-func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao,rp *redis.Pool) *ActivityService {
+func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao, rp *redis.Pool) *ActivityService {
 	return &ActivityService{
 		userDao:     ud,
 		activityDao: ad,
-		redisPool: rp,
+		redisPool:   rp,
 	}
 }
 

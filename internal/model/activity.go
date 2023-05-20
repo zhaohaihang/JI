@@ -1,7 +1,7 @@
 package model
 
 import (
-	"time"
+	"ji/pkg/utils/datetime"
 
 	"gorm.io/gorm"
 )
@@ -12,8 +12,8 @@ type Activity struct {
 	Title          string
 	Introduction   string `gorm:"size:1000"`
 	Status         int
-	StartTime      time.Time
-	EndTime        time.Time
+	StartTime      datetime.DateTime
+	EndTime        datetime.DateTime
 	Location       Point `gorm:"type:point"`
 	ExpectedNumber uint
 	CurrentNumber  uint
