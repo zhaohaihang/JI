@@ -2,7 +2,6 @@ package valid
 
 import (
 	"regexp"
-	"strconv"
 
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -31,18 +30,12 @@ var phone validator.Func = func(fl validator.FieldLevel) bool {
 	return err == nil && matched
 }
 
-var latitude validator.Func =  func(fl validator.FieldLevel) bool {
-	lat, err := strconv.ParseFloat(fl.Field().String(), 64)
-	if err != nil {
-		return false
-	}
+var latitude validator.Func = func(fl validator.FieldLevel) bool {
+	lat := fl.Field().Float()
 	return lat >= -90 && lat <= 90
 }
 
-var longitude validator.Func =  func(fl validator.FieldLevel) bool {
-	lng, err := strconv.ParseFloat(fl.Field().String(), 64)
-	if err != nil {
-		return false
-	}
+var longitude validator.Func = func(fl validator.FieldLevel) bool {
+	lng := fl.Field().Float()
 	return lng >= -180 && lng <= 180
 }
