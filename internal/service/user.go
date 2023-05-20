@@ -6,8 +6,8 @@ import (
 	"ji/internal/model"
 	"ji/internal/serializer"
 	"ji/pkg/e"
-	"ji/pkg/jwt"
 	"ji/pkg/storages/localstroage"
+	"ji/pkg/utils/tokenutil.go"
 
 	"mime/multipart"
 	"time"
@@ -78,7 +78,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		user.LastLogin = time.Now()
 	}
 
-	token, err := jwt.GenerateToken(user.ID, loginUserInfo.UserName, 0)
+	token, err := tokenutil.GenerateToken(user.ID, loginUserInfo.UserName, 0)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorAuthToken

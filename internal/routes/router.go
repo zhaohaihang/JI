@@ -5,8 +5,7 @@ import (
 
 	v1 "ji/internal/api/v1"
 
-	"ji/pkg/cors"
-	"ji/pkg/jwt"
+	"ji/pkg/middleware"
 
 	"ji/pkg/valid"
 
@@ -20,7 +19,7 @@ import (
 
 func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
 	r := gin.Default()
-	r.Use(cors.Cors())
+	r.Use(middleware.Cors())
 	r.StaticFS("/static", http.Dir("../static"))
 
 	valid.Init()
@@ -38,13 +37,13 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
 		v1.GET("activity/near", ac.ListNearActivity)
 
 		authed := v1.Group("/") // 需要登陆保护
-		authed.Use(jwt.JWT())
+		authed.Use(middleware.JWT())
 		{
 			authed.PUT("user", uc.UserUpdate)
 			authed.GET("user/:uid", uc.ViewUser)
-			authed.POST("user/avatar", uc.UploadUserAvatar)
+			authed.POST("user/avatar",  uc.UploadUserAvatar)
 
-			authed.POST("activity", ac.CreateActivity)
+			authed.POST("activity",ac.CreateActivity)
 		}
 	}
 	return r

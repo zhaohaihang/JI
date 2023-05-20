@@ -33,10 +33,10 @@ type CreateActivityInfo struct {
 	StartTime      time.Time `form:"start_time" json:"start_time" binding:"required,datetime=2006-01-02"`
 	EndTime        time.Time `form:"end_time" json:"end_time" binding:"required,datetime=2006-01-02"`
 	Location       Point     `form:"location" json:"location"`
-	ExpectedNumber uint      `form:"biography" json:"biography" binding:"lte=10000"`
+	ExpectedNumber uint      `form:"expected_number" json:"expected_number" `
 }
 
 type NearInfo struct {
 	Point
-	Rad int     `form:"rad" json:"rad" binding:"lte=100"`
+	Rad int `form:"rad" json:"rad" binding:"lte=100"`
 }

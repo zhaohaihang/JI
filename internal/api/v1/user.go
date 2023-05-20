@@ -1,8 +1,8 @@
 package v1
 
 import (
-	"ji/pkg/jwt"
 	"ji/pkg/logger"
+	"ji/pkg/utils/tokenutil.go"
 
 	"ji/internal/serializer"
 	"ji/internal/service"
@@ -61,7 +61,7 @@ func (uc *UserController) UserLogin(c *gin.Context) {
 // @Router /api/v1/user [put]
 func (uc *UserController) UserUpdate(c *gin.Context) {
 	var updateUserInfo serializer.UpdateUserInfo
-	claims := jwt.GetTokenClaimsFromContext(c)
+	claims := tokenutil.GetTokenClaimsFromContext(c)
 	if err := c.ShouldBind(&updateUserInfo); err == nil {
 		res := uc.userService.UpdateUserById(c.Request.Context(), claims.UserID, updateUserInfo)
 		c.JSON(http.StatusOK, res)
@@ -109,7 +109,7 @@ func (uc *UserController) UploadUserAvatar(c *gin.Context) {
 		uc.log.Logrus.Infoln(err)
 	} else {
 		fileSize := fileHeader.Size
-		claims := jwt.GetTokenClaimsFromContext(c)
+		claims := tokenutil.GetTokenClaimsFromContext(c)
 		res := uc.userService.UploadUserAvatar(c.Request.Context(), claims.UserID, file, fileSize)
 		c.JSON(http.StatusOK, res)
 	}

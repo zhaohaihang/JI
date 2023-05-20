@@ -12,6 +12,7 @@ services:
       - 4000:4000
     depends_on:
       - mysql
+      - redis
 
   mysql:
     container_name: ji_mysql
@@ -24,3 +25,12 @@ services:
       - /var/lib/mysql:/var/lib/mysql
     ports:
       - 3306:3306
+  
+  redis:
+    container_name: ji_redis
+    image: redis:6.0
+    restart: always
+    volumes:
+      - /usr/local/redis:/usr/local/redis
+    ports:
+      - 6379:6379

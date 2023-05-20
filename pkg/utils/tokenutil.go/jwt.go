@@ -1,8 +1,7 @@
-package jwt
+package tokenutil
 
 import (
 	"fmt"
-	"ji/pkg/e"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
@@ -10,7 +9,6 @@ import (
 
 	"time"
 )
-
 
 var jwtSecret = []byte("FanOne")
 
@@ -42,7 +40,7 @@ func GenerateToken(id uint, username string, authority int) (string, error) {
 //ParseToken 验证用户token
 func ParseToken(tokenStr string) (*Claims, error) {
 	token := strings.Fields(tokenStr)
-	if len(token) != 2 || strings.ToLower(token[0]) != "Bearer" || token[1] == "" {
+	if len(token) != 2 || strings.ToLower(token[0]) != "bearer" || token[1] == "" {
 		return nil, fmt.Errorf("authorization header invaild")
 	}
 
@@ -80,36 +78,4 @@ func GetTokenClaimsFromContext(c *gin.Context) *Claims {
 	}
 
 	return claims
-}
-
-//JWT token验证中间件
-func JWT() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var code int
-		var data interface{}
-		code = 200
-		token := c.GetHeader("Authorization")
-		var claims *Claims
-		if token == "" {
-			code = e.ErrorTokenIsNUll
-		} else {
-			claims, err := ParseToken(token)
-			if err != nil {
-				code = e.ErrorAuthCheckTokenFail
-			} else if time.Now().Unix() > claims.ExpiresAt {
-				code = e.ErrorAuthCheckTokenTimeout
-			}
-		}
-		if code != e.SUCCESS {
-			c.JSON(200, gin.H{
-				"status": code,
-				"msg":    e.GetMsg(code),
-				"data":   data,
-			})
-			c.Abort()
-			return
-		}
-		SetTokenClaimsToContext(c, claims)
-		c.Next()
-	}
 }

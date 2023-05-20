@@ -7,17 +7,18 @@ var MsgFlags = map[int]string{
 	ERROR:                 "fail",
 	InvalidParams:         "请求参数错误",
 
-	ErrorPasswordNotCompare:         "账号密码错误",
+	ErrorPasswordNotCompare: "账号密码错误",
 
 	ErrorAuthCheckTokenFail:        "Token鉴权失败",
 	ErrorAuthCheckTokenTimeout:     "Token已超时",
 	ErrorAuthToken:                 "Token生成失败",
 	ErrorAuthInsufficientAuthority: "权限不足",
-	ErrorTokenIsNUll: 				"未携带token数据",
-	
+	ErrorTokenIsNUll:               "未携带token数据",
+
 	ErrorDatabase: "数据库操作出错,请重试",
 
-	ErrorUploadFile:    "文件上传失败",
+	ErrorUploadFile:        "文件上传失败",
+	ErrorUserActivityLimit: "创建活动太频繁",
 }
 
 // GetMsg 获取状态码对应信息

@@ -10,6 +10,7 @@ import (
 	"ji/internal/service"
 	"ji/pkg/database"
 	"ji/pkg/logger"
+	"ji/pkg/redis"
 	"ji/pkg/server"
 	"ji/pkg/storages/localstroage"
 
@@ -29,10 +30,9 @@ var providerSet = wire.NewSet(
 	dao.ActivityDaoProviderSet,
 	logger.LoggerProviderSet,
 	localstroage.LocalStroageProviderSet,
+	redis.RedisPoolProviderSet,
 )
 
 func CreateServer() (*server.Server, error) {
 	panic(wire.Build(providerSet))
 }
-
-

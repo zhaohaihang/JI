@@ -36,11 +36,11 @@ definitions:
     type: object
   serializer.CreateActivityInfo:
     properties:
-      biography:
-        maximum: 10000
-        type: integer
       end_time:
         type: string
+      expected_number:
+        maximum: 10000
+        type: integer
       introduction:
         maxLength: 1000
         type: string

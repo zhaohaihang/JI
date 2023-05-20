@@ -14,7 +14,6 @@ import (
 	"github.com/google/wire"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
-
 )
 
 type Server struct {

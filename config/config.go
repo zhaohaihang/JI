@@ -26,7 +26,6 @@ type RedisConf struct {
 	RedisDb     string `flag:"redis_db" toml:"redis_db" json:"redis_db"`
 	RedisAddr   string `flag:"redis_addr" toml:"redis_addr" json:"redis_addr"`
 	RedisPw     string `flag:"redis_pw" toml:"redis_pw" json:"redis_pw"`
-	RedisDbName string `flag:"redis_dbname" toml:"redis_dbname" json:"redis_dbname"`
 }
 
 type StaticConf struct {
@@ -41,21 +40,6 @@ type Config struct {
 	Redis  RedisConf  `flag:"redis" toml:"redis" json:"redis"`
 	Static StaticConf `flag:"static" toml:"static" json:"static"`
 }
-
-// var Conf = Config{}
-
-// const (
-// 	CONFIG_FILE = "../config/ji.conf"
-// )
-
-// func LoadConfig() {
-// 	_, err := toml.DecodeFile(CONFIG_FILE, &Conf)
-// 	if err != nil {
-// 		fmt.Println("config file load failed ,please check the file path:", err)
-// 		panic(err)
-// 	}
-// 	fmt.Printf("config file load success,the content is :%v ", Conf)
-// }
 
 func NewConfig() *Config {
 	var Conf Config

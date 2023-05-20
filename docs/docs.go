@@ -536,12 +536,12 @@ const docTemplate = `{
                 "status"
             ],
             "properties": {
-                "biography": {
-                    "type": "integer",
-                    "maximum": 10000
-                },
                 "end_time": {
                     "type": "string"
+                },
+                "expected_number": {
+                    "type": "integer",
+                    "maximum": 10000
                 },
                 "introduction": {
                     "type": "string",

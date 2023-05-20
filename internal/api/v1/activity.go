@@ -3,8 +3,8 @@ package v1
 import (
 	"ji/internal/serializer"
 	"ji/internal/service"
-	"ji/pkg/jwt"
 	"ji/pkg/logger"
+	"ji/pkg/utils/tokenutil.go"
 
 	"net/http"
 	"strconv"
@@ -41,7 +41,7 @@ var ActivityControllerProviderSet = wire.NewSet(NewActivityContrller)
 // @Router /api/v1/activity [post]
 func (ac *ActivityController) CreateActivity(c *gin.Context) {
 	var createActivityInfo serializer.CreateActivityInfo
-	claims := jwt.GetTokenClaimsFromContext(c)
+	claims := tokenutil.GetTokenClaimsFromContext(c)
 	if err := c.ShouldBind(&createActivityInfo); err != nil {
 		res := ac.activityService.CreateActivity(c.Request.Context(), claims.UserID, createActivityInfo)
 		c.JSON(http.StatusOK, res)

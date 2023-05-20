@@ -15,6 +15,7 @@ import (
 	"ji/internal/service"
 	"ji/pkg/database"
 	"ji/pkg/logger"
+	"ji/pkg/redis"
 	"ji/pkg/server"
 	"ji/pkg/storages/localstroage"
 )
@@ -27,7 +28,11 @@ func CreateServer() (*server.Server, error) {
 	databaseDatabase := database.NewDatabase(configConfig)
 	userDao := dao.NewUserDao(databaseDatabase)
 	activityDao := dao.NewActivityDao(databaseDatabase)
-	activityService := service.NewActivityService(userDao, activityDao)
+	pool, err := redis.NewRedisPool(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	activityService := service.NewActivityService(userDao, activityDao, pool)
 	userService := service.NewUserService(userDao, activityDao)
 	activityController := v1.NewActivityContrller(loggerLogger, activityService, userService)
 	userController := v1.NewUserContrller(loggerLogger, activityService, userService)
@@ -38,4 +43,4 @@ func CreateServer() (*server.Server, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(server.ServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ActivityControllerProviderSet, v1.UserControllerProviderSet, service.UserServiceProviderSet, service.ActivityServiceProviderSet, database.DatabaseProviderSet, dao.UserDaoProviderSet, dao.ActivityDaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet)
+var providerSet = wire.NewSet(server.ServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ActivityControllerProviderSet, v1.UserControllerProviderSet, service.UserServiceProviderSet, service.ActivityServiceProviderSet, database.DatabaseProviderSet, dao.UserDaoProviderSet, dao.ActivityDaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet)

@@ -7,6 +7,8 @@ import (
 	"ji/internal/serializer"
 	"ji/pkg/e"
 
+	"github.com/gomodule/redigo/redis"
+
 	"github.com/google/wire"
 	"github.com/sirupsen/logrus"
 )
@@ -14,12 +16,14 @@ import (
 type ActivityService struct {
 	userDao     *dao.UserDao
 	activityDao *dao.ActivityDao
+	redisPool        *redis.Pool
 }
 
-func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao) *ActivityService {
+func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao,rp *redis.Pool) *ActivityService {
 	return &ActivityService{
 		userDao:     ud,
 		activityDao: ad,
+		redisPool: rp,
 	}
 }
 
@@ -73,7 +77,6 @@ func (service *ActivityService) CreateActivity(ctx context.Context, uId uint, ac
 
 func (service *ActivityService) GetActivityById(ctx context.Context, aId uint) serializer.Response {
 	code := e.SUCCESS
-	// activityDao := dao.NewActivityDao(ctx)
 	activity, err := service.activityDao.GetActivityById(aId)
 	if err != nil {
 		logrus.Info(err)
