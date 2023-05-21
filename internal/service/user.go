@@ -7,6 +7,7 @@ import (
 	"ji/internal/serializer"
 	"ji/pkg/e"
 	"ji/pkg/storages/localstroage"
+	"ji/pkg/utils/datetime"
 	"ji/pkg/utils/tokenutil.go"
 
 	"mime/multipart"
@@ -75,7 +76,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 			}
 		}
 		// 新注册用户，返回的最后一次登录时间为当前时间
-		user.LastLogin = time.Now()
+		user.LastLogin = datetime.DateTime(time.Now())
 	}
 
 	token, err := tokenutil.GenerateToken(user.ID, loginUserInfo.UserName, 0)
@@ -88,7 +89,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		}
 	}
 
-	service.userDao.UpdateLastLoginById(user.ID, time.Now())
+	service.userDao.UpdateLastLoginById(user.ID, datetime.DateTime(time.Now()))
 
 	return serializer.Response{
 		Status: code,

@@ -77,6 +77,7 @@ func (uc *UserController) UserUpdate(c *gin.Context) {
 // @Tags user
 // @Accept  json
 // @Produce  json
+// @Param Authorization header string true "Authorization header parameter"
 // @Param uid path int true "user ID"
 // @Success 200 {object} serializer.Response{data=serializer.User}
 // @Router /api/v1/user/{uid} [get]

@@ -3,7 +3,7 @@ package dao
 import (
 	"ji/internal/model"
 	"ji/pkg/database"
-	"time"
+	"ji/pkg/utils/datetime"
 
 	"github.com/google/wire"
 	"gorm.io/gorm"
@@ -59,7 +59,7 @@ func (userDao *UserDao) CreateUser(user *model.User) error {
 }
 
 // UpdateLastLoginById 根据ID更新最后登录时间
-func (userDao *UserDao) UpdateLastLoginById(uId uint, loginTime time.Time) (err error) {
+func (userDao *UserDao) UpdateLastLoginById(uId uint, loginTime datetime.DateTime) (err error) {
 	return userDao.DB.Model(&model.User{}).Select("last_login").Where("id=?", uId).Updates(&model.User{LastLogin: loginTime}).Error
 }
 
