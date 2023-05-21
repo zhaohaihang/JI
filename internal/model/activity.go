@@ -12,9 +12,9 @@ type Activity struct {
 	Title          string
 	Introduction   string `gorm:"size:1000"`
 	Status         int
-	StartTime      datetime.DateTime
-	EndTime        datetime.DateTime
-	Location       Point `gorm:"type:point"`
+	StartTime      datetime.DateTime `gorm:"type:datetime"`
+	EndTime        datetime.DateTime `gorm:"type:datetime"`
+	Location       Point             `gorm:"type:point"`
 	ExpectedNumber uint
 	CurrentNumber  uint
 	UserId         uint
