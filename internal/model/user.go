@@ -19,7 +19,7 @@ type User struct {
 	Phone          string
 	Status         string
 	Avatar         string `gorm:"size:1000"`
-	LastLogin      datetime.DateTime
+	LastLogin      datetime.DateTime `gorm:"type:datetime"`
 	Location       Point `gorm:"type:point"`
 	Extra          string `gorm:"size:1000"`
 }
