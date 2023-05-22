@@ -1,7 +1,6 @@
 package model
 
 import (
-	"ji/pkg/utils/datetime"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -18,10 +17,10 @@ type User struct {
 	Email          string
 	Phone          string
 	Status         string
-	Avatar         string            `gorm:"size:1000"`
-	LastLogin      datetime.DateTime `gorm:"type:datetime"`
-	Location       Point             `gorm:"type:point"`
-	Extra          string            `gorm:"size:1000"`
+	Avatar         string `gorm:"size:1000"`
+	LastLogin      int64
+	Location       Point  `gorm:"type:point"`
+	Extra          string `gorm:"size:1000"`
 }
 
 const (
@@ -30,7 +29,7 @@ const (
 )
 
 func (user *User) BeforeSave(db *gorm.DB) error {
-	user.LastLogin = datetime.DateTime(time.Now())
+	user.LastLogin = time.Now().UnixMilli()
 	return nil
 }
 

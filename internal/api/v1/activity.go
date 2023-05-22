@@ -42,7 +42,7 @@ var ActivityControllerProviderSet = wire.NewSet(NewActivityContrller)
 func (ac *ActivityController) CreateActivity(c *gin.Context) {
 	var createActivityInfo serializer.CreateActivityInfo
 	claims := tokenutil.GetTokenClaimsFromContext(c)
-	if err := c.ShouldBind(&createActivityInfo); err != nil {
+	if err := c.ShouldBind(&createActivityInfo); err == nil {
 		res := ac.activityService.CreateActivity(c.Request.Context(), claims.UserID, createActivityInfo)
 		c.JSON(http.StatusOK, res)
 	} else {

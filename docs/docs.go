@@ -372,6 +372,13 @@ const docTemplate = `{
                 "summary": "查看用户信息",
                 "parameters": [
                     {
+                        "type": "string",
+                        "description": "Authorization header parameter",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
                         "type": "integer",
                         "description": "user ID",
                         "name": "uid",
@@ -493,8 +500,8 @@ const docTemplate = `{
                 "current_Number": {
                     "type": "integer"
                 },
-                "end_time": {
-                    "type": "string"
+                "endTime": {
+                    "type": "integer"
                 },
                 "expected_number": {
                     "type": "integer"
@@ -508,8 +515,8 @@ const docTemplate = `{
                 "location": {
                     "$ref": "#/definitions/serializer.Point"
                 },
-                "start_time": {
-                    "type": "string"
+                "startTime": {
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer"
@@ -537,11 +544,10 @@ const docTemplate = `{
             ],
             "properties": {
                 "end_time": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "expected_number": {
-                    "type": "integer",
-                    "maximum": 10000
+                    "type": "integer"
                 },
                 "introduction": {
                     "type": "string",
@@ -551,7 +557,7 @@ const docTemplate = `{
                     "$ref": "#/definitions/serializer.Point"
                 },
                 "start_time": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "status": {
                     "type": "integer",
@@ -683,8 +689,8 @@ const docTemplate = `{
                 "id": {
                     "type": "integer"
                 },
-                "last_login": {
-                    "type": "string"
+                "lastLogin": {
+                    "type": "integer"
                 },
                 "location": {
                     "$ref": "#/definitions/model.Point"

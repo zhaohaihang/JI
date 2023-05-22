@@ -2,21 +2,20 @@ package serializer
 
 import (
 	"ji/internal/model"
-	"ji/pkg/utils/datetime"
 )
 
 type User struct {
-	ID        uint              `json:"id"`
-	UserName  string            `json:"username"`
-	Email     string            `json:"email"`
-	Status    string            `json:"status"`
-	Avatar    string            `json:"avatar"`
-	LastLogin datetime.DateTime `json:"last_login"`
-	Address   string            `json:"address"`
-	Biography string            `json:"biography"`
-	Phone     string            `json:"phone"`
-	Location  model.Point       `json:"location"`
-	Extra     string            `json:"extra"`
+	ID        uint   `json:"id"`
+	UserName  string `json:"username"`
+	Email     string `json:"email"`
+	Status    string `json:"status"`
+	Avatar    string `json:"avatar"`
+	LastLogin int64
+	Address   string      `json:"address"`
+	Biography string      `json:"biography"`
+	Phone     string      `json:"phone"`
+	Location  model.Point `json:"location"`
+	Extra     string      `json:"extra"`
 }
 
 // BuildUser 序列化用户
