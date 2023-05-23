@@ -33,8 +33,8 @@ func CreateServer() (*server.Server, error) {
 	if err != nil {
 		return nil, err
 	}
-	activityService := service.NewActivityService(userDao, activityDao, pool)
 	qiNiuStroage := qiniu.NewQiNiuStroage(configConfig)
+	activityService := service.NewActivityService(userDao, activityDao, pool, qiNiuStroage)
 	userService := service.NewUserService(userDao, activityDao, qiNiuStroage)
 	activityController := v1.NewActivityContrller(loggerLogger, activityService, userService)
 	userController := v1.NewUserContrller(loggerLogger, activityService, userService)
