@@ -9,7 +9,7 @@ definitions:
     type: object
   serializer.Activity:
     properties:
-      bg_image:
+      cover:
         type: string
       current_Number:
         type: integer
@@ -57,7 +57,7 @@ definitions:
     type: object
   serializer.CreateActivityInfo:
     properties:
-      bg_image:
+      cover:
         type: string
       end_time:
         type: integer
@@ -249,7 +249,7 @@ paths:
       summary: 查看活动详情
       tags:
       - activity
-  /api/v1/activity/bgimage:
+  /api/v1/activity/cover:
     put:
       consumes:
       - multipart/form-data

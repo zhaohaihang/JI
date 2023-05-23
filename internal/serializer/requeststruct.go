@@ -32,7 +32,7 @@ type CreateActivityInfo struct {
 	EndTime        int64  `form:"end_time" json:"end_time"  binding:"required"`
 	Location       Point  `form:"location" json:"location"`
 	ExpectedNumber uint   `form:"expected_number" json:"expected_number" `
-	BgImage        string `form:"bg_image" json:"bg_image" `
+	Cover          string `form:"cover" json:"cover" `
 }
 
 type NearInfo struct {

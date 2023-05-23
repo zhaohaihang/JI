@@ -15,7 +15,7 @@ type Activity struct {
 	Location       Point `gorm:"type:point;index:idx_activity_location;not null"`
 	ExpectedNumber uint
 	CurrentNumber  uint
-	BgImage        string
+	Cover          string
 	UserId         uint
 	UserName       string
 	UserAvatar     string

@@ -130,7 +130,7 @@ func (service *ActivityService) ListNearActivity(ctx context.Context, nearInfo s
 	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
 }
 
-func (service *ActivityService) UploadActivityBgImage(ctx context.Context, uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
+func (service *ActivityService) UploadActivityCover(ctx context.Context, uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
 	code := e.SUCCESS
 	var err error
 

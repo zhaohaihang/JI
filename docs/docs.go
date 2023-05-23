@@ -78,7 +78,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/activity/bgimage": {
+        "/api/v1/activity/cover": {
             "put": {
                 "description": "上传活动图片接口",
                 "consumes": [
@@ -565,7 +565,7 @@ const docTemplate = `{
         "serializer.Activity": {
             "type": "object",
             "properties": {
-                "bg_image": {
+                "cover": {
                     "type": "string"
                 },
                 "current_Number": {
@@ -639,7 +639,7 @@ const docTemplate = `{
                 "status"
             ],
             "properties": {
-                "bg_image": {
+                "cover": {
                     "type": "string"
                 },
                 "end_time": {

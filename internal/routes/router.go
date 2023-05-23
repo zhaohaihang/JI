@@ -45,6 +45,7 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
 			authed.POST("user/avatar",  uc.UploadUserAvatar)
 
 			authed.POST("activity",ac.CreateActivity)
+			authed.PUT("activity/cover",ac.UploadActivityCover)
 		}
 	}
 	return r

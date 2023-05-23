@@ -93,7 +93,7 @@ func (ac *ActivityController) ListNearActivity(c *gin.Context) {
 }
 
 
-// UploadActivityBgImage godoc
+// UploadActivityCover godoc
 // @Summary 上传活动图片
 // @Description  上传活动图片接口
 // @Tags activity
@@ -102,15 +102,15 @@ func (ac *ActivityController) ListNearActivity(c *gin.Context) {
 // @Param file formData file true "图片文件"
 // @Param Authorization header string true "Authorization header parameter"
 // @Success 200 {object} serializer.Response{}
-// @Router /api/v1/activity/bgimage [put]
-func (ac *ActivityController) UploadActivityBgImage(c *gin.Context) {
+// @Router /api/v1/activity/cover [put]
+func (ac *ActivityController) UploadActivityCover(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
 		ac.log.Logrus.Infoln(err)
 	} else {
 		claims := tokenutil.GetTokenClaimsFromContext(c)
-		res := ac.activityService.UploadActivityBgImage(c.Request.Context(), claims.UserID, file, fileHeader)
+		res := ac.activityService.UploadActivityCover(c.Request.Context(), claims.UserID, file, fileHeader)
 		c.JSON(http.StatusOK, res)
 	}
 }

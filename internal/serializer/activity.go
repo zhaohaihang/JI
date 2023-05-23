@@ -14,7 +14,7 @@ type Activity struct {
 	Location       Point  `json:"location"`
 	ExpectedNumber uint   `json:"expected_number"`
 	CurrentNumber  uint   `json:"current_Number"`
-	BgImage        string `json:"bg_image"`
+	Cover          string `json:"cover"`
 	UserId         uint   `json:"user_id"`
 	UserName       string `json:"user_name"`
 	UserAvatar     string `json:"user_avatar"`
@@ -32,7 +32,7 @@ func BuildActivity(activity *model.Activity) *Activity {
 		Location:       Point(activity.Location),
 		ExpectedNumber: activity.ExpectedNumber,
 		CurrentNumber:  activity.CurrentNumber,
-		BgImage:        activity.BgImage,
+		Cover:          activity.Cover,
 		UserId:         activity.UserId,
 		UserName:       activity.UserName,
 		UserAvatar:     activity.UserAvatar,
