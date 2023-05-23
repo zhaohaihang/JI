@@ -12,7 +12,7 @@ type Activity struct {
 	Status         int
 	StartTime      int64
 	EndTime        int64
-	Location       Point `gorm:"type:point"`
+	Location       Point `gorm:"type:point;index:idx_activity_location;not null"`
 	ExpectedNumber uint
 	CurrentNumber  uint
 	BgImage        string
