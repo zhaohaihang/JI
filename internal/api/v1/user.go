@@ -2,7 +2,7 @@ package v1
 
 import (
 	"ji/pkg/logger"
-	"ji/pkg/utils/tokenutil.go"
+	"ji/pkg/utils/tokenutil"
 
 	"ji/internal/serializer"
 	"ji/internal/service"
@@ -132,6 +132,29 @@ func (uc *ActivityController) ListUserActivity(c *gin.Context) {
 	c.ShouldBindQuery(basePage)
 	if uId, err := strconv.ParseUint(uIdStr, 10, 32); err == nil {
 		res := uc.activityService.ListActivityByUserId(c.Request.Context(), uint(uId), basePage)
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		uc.log.Logrus.Infoln(err)
+	}
+}
+
+
+// ChangePasswd godoc
+// @Summary  修改密码
+// @Description  用户修改密码接口
+// @Tags user
+// @Accept  json
+// @Produce  json
+// @Param Authorization header string true "Authorization header parameter"
+// @Param ChangePasswdInfo body serializer.ChangePasswdInfo true "user changeinfo info"
+// @Success 200 {object} serializer.Response{}
+// @Router /api/v1/user/changepasswd [put]
+func (uc *UserController) ChangePasswd(c *gin.Context) {
+	var changePasswdInfo serializer.ChangePasswdInfo
+	claims := tokenutil.GetTokenClaimsFromContext(c)
+	if err := c.ShouldBind(&changePasswdInfo); err == nil {
+		res := uc.userService.ChangePasswd(claims.UserID, changePasswdInfo)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))

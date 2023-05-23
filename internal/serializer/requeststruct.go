@@ -39,3 +39,9 @@ type NearInfo struct {
 	Point
 	Rad int `form:"rad" json:"rad" binding:"lte=100"`
 }
+
+type ChangePasswdInfo struct {
+	OldPasswd string `form:"old_passwd" json:"old_passwd" binding:"required,min=8,max=20"`
+	NewPasswd string `form:"new_passwd" json:"new_passwd" binding:"required,min=8,max=20"`
+	RePasswd  string `form:"re_passwd" json:"re_passwd" binding:"required,min=8,max=20"`
+}

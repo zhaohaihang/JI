@@ -4,7 +4,7 @@ import (
 	"ji/internal/serializer"
 	"ji/internal/service"
 	"ji/pkg/logger"
-	"ji/pkg/utils/tokenutil.go"
+	"ji/pkg/utils/tokenutil"
 
 	"net/http"
 	"strconv"

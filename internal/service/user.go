@@ -7,7 +7,7 @@ import (
 	"ji/internal/serializer"
 	"ji/pkg/e"
 	"ji/pkg/storages/qiniu"
-	"ji/pkg/utils/tokenutil.go"
+	"ji/pkg/utils/tokenutil"
 	"strconv"
 	"strings"
 
@@ -195,14 +195,57 @@ func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file
 		code = e.ErrorUploadFile
 		return serializer.Response{
 			Status: code,
-			Data:   e.GetMsg(code),
-			Error:  path,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
 		}
 	}
 
 	return serializer.Response{
 		Status: code,
 		Data:   path,
+		Msg:    e.GetMsg(code),
+	}
+}
+
+func (service *UserService) ChangePasswd(uId uint, changePasswdInfo serializer.ChangePasswdInfo) serializer.Response {
+
+	var code = e.SUCCESS
+	user, err := service.userDao.GetUserById(uId)
+
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	pass := user.CheckPassword(changePasswdInfo.OldPasswd)
+	if !pass {
+		code = e.ErrorPasswordNotCompare
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+
+	user.SetPassword(changePasswdInfo.NewPasswd)
+
+	err = service.userDao.UpdateUserById(uId, user)
+	if err != nil {
+		logrus.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
 		Msg:    e.GetMsg(code),
 	}
 }

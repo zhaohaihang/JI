@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"ji/pkg/e"
-	"ji/pkg/utils/tokenutil.go"
+	"ji/pkg/utils/tokenutil"
 
 	"github.com/gin-gonic/gin"
 

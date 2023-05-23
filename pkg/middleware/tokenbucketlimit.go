@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"ji/pkg/e"
 	"ji/pkg/redis"
-	"ji/pkg/utils/tokenutil.go"
+	"ji/pkg/utils/tokenutil"
 	"time"
 
 	"github.com/gin-gonic/gin"
