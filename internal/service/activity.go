@@ -6,6 +6,11 @@ import (
 	"ji/internal/model"
 	"ji/internal/serializer"
 	"ji/pkg/e"
+	"ji/pkg/storages/qiniu"
+	"mime/multipart"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/gomodule/redigo/redis"
 
@@ -14,16 +19,18 @@ import (
 )
 
 type ActivityService struct {
-	userDao     *dao.UserDao
-	activityDao *dao.ActivityDao
-	redisPool   *redis.Pool
+	userDao      *dao.UserDao
+	activityDao  *dao.ActivityDao
+	redisPool    *redis.Pool
+	qiniuStroage *qiniu.QiNiuStroage
 }
 
-func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao, rp *redis.Pool) *ActivityService {
+func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao, rp *redis.Pool, qs *qiniu.QiNiuStroage) *ActivityService {
 	return &ActivityService{
-		userDao:     ud,
-		activityDao: ad,
-		redisPool:   rp,
+		userDao:      ud,
+		activityDao:  ad,
+		redisPool:    rp,
+		qiniuStroage: qs,
 	}
 }
 
@@ -121,4 +128,40 @@ func (service *ActivityService) ListNearActivity(ctx context.Context, nearInfo s
 		}
 	}
 	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
+}
+
+func (service *ActivityService) UploadActivityBgImage(ctx context.Context, uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
+	code := e.SUCCESS
+	var err error
+
+	//重命名文件的名称
+	timestamp := time.Now().Unix()
+	tm := time.Unix(timestamp, 0)
+	ti := tm.Format("2006010203040501")
+	//提取文件后缀类型
+	var ext string
+	if pos := strings.LastIndexByte(fileHeader.Filename, '.'); pos != -1 {
+		ext = fileHeader.Filename[pos:]
+		if ext == "." {
+			ext = ""
+		}
+	}
+	filename := "activity_bg/" + strconv.Itoa(int(uId)) + "_" + ti + "_" + strconv.FormatInt(time.Now().Unix(), 10) + ext
+
+	path, err := service.qiniuStroage.UploadToQiNiu(filename, file, fileHeader.Size)
+
+	if err != nil {
+		code = e.ErrorUploadFile
+		return serializer.Response{
+			Status: code,
+			Data:   e.GetMsg(code),
+			Error:  path,
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
+		Data:   path,
+		Msg:    e.GetMsg(code),
+	}
 }

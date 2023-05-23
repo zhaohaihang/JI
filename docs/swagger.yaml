@@ -9,6 +9,8 @@ definitions:
     type: object
   serializer.Activity:
     properties:
+      bg_image:
+        type: string
       current_Number:
         type: integer
       endTime:
@@ -36,6 +38,8 @@ definitions:
     type: object
   serializer.CreateActivityInfo:
     properties:
+      bg_image:
+        type: string
       end_time:
         type: integer
       expected_number:
@@ -226,6 +230,32 @@ paths:
       summary: 查看活动详情
       tags:
       - activity
+  /api/v1/activity/bgimage:
+    put:
+      consumes:
+      - multipart/form-data
+      description: 上传活动图片接口
+      parameters:
+      - description: 图片文件
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Response'
+      summary: 上传活动图片
+      tags:
+      - activity
   /api/v1/activity/near:
     get:
       consumes:
@@ -376,7 +406,7 @@ paths:
       tags:
       - user
   /api/v1/user/avatar:
-    post:
+    put:
       consumes:
       - multipart/form-data
       description: 上传用户头像接口
@@ -397,12 +427,7 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/serializer.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/serializer.User'
-              type: object
+            $ref: '#/definitions/serializer.Response'
       summary: 上传用户头像
       tags:
       - user

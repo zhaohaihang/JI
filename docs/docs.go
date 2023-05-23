@@ -78,6 +78,45 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/activity/bgimage": {
+            "put": {
+                "description": "上传活动图片接口",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "上传活动图片",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "图片文件",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization header parameter",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serializer.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/activity/near": {
             "get": {
                 "description": "根据位置和半径查看活动接口",
@@ -249,7 +288,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/user/avatar": {
-            "post": {
+            "put": {
                 "description": "上传用户头像接口",
                 "consumes": [
                     "multipart/form-data"
@@ -281,19 +320,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/serializer.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/serializer.User"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/serializer.Response"
                         }
                     }
                 }
@@ -497,6 +524,9 @@ const docTemplate = `{
         "serializer.Activity": {
             "type": "object",
             "properties": {
+                "bg_image": {
+                    "type": "string"
+                },
                 "current_Number": {
                     "type": "integer"
                 },
@@ -543,6 +573,9 @@ const docTemplate = `{
                 "status"
             ],
             "properties": {
+                "bg_image": {
+                    "type": "string"
+                },
                 "end_time": {
                     "type": "integer"
                 },

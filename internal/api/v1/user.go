@@ -101,7 +101,7 @@ func (uc *UserController) ViewUser(c *gin.Context) {
 // @Produce  json
 // @Param file formData file true "图片文件"
 // @Param Authorization header string true "Authorization header parameter"
-// @Success 200 {object} serializer.Response{data=serializer.User}
+// @Success 200 {object} serializer.Response{}
 // @Router /api/v1/user/avatar [put]
 func (uc *UserController) UploadUserAvatar(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")

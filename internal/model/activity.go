@@ -15,6 +15,7 @@ type Activity struct {
 	Location       Point `gorm:"type:point"`
 	ExpectedNumber uint
 	CurrentNumber  uint
+	BgImage        string
 	UserId         uint
 	UserName       string
 	UserAvatar     string
