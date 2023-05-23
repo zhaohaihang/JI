@@ -13,6 +13,7 @@ import (
 	"ji/pkg/redis"
 	"ji/pkg/server"
 	"ji/pkg/storages/localstroage"
+	"ji/pkg/storages/qiniu"
 
 	"github.com/google/wire"
 )
@@ -31,6 +32,8 @@ var providerSet = wire.NewSet(
 	logger.LoggerProviderSet,
 	localstroage.LocalStroageProviderSet,
 	redis.RedisPoolProviderSet,
+	qiniu.QiNiuStroageProviderSet,
+
 )
 
 func CreateServer() (*server.Server, error) {

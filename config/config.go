@@ -23,9 +23,9 @@ type MysqlConf struct {
 }
 
 type RedisConf struct {
-	RedisDb     string `flag:"redis_db" toml:"redis_db" json:"redis_db"`
-	RedisAddr   string `flag:"redis_addr" toml:"redis_addr" json:"redis_addr"`
-	RedisPw     string `flag:"redis_pw" toml:"redis_pw" json:"redis_pw"`
+	RedisDb   string `flag:"redis_db" toml:"redis_db" json:"redis_db"`
+	RedisAddr string `flag:"redis_addr" toml:"redis_addr" json:"redis_addr"`
+	RedisPw   string `flag:"redis_pw" toml:"redis_pw" json:"redis_pw"`
 }
 
 type StaticConf struct {
@@ -34,11 +34,19 @@ type StaticConf struct {
 	AvatarPath string `flag:"avatar_path" toml:"avatar_path" json:"avatar_path"`
 }
 
+type QiNiuConf struct {
+	AccessKey string `flag:"access_key" toml:"access_key" json:"access_key"`
+	SerectKey string `flag:"serect_key" toml:"serect_key" json:"serect_key"`
+	Bucket    string `flag:"bucket" toml:"bucket" json:"bucket"`
+	Domain    string `flag:"domain" toml:"domain" json:"domain"`
+}
+
 type Config struct {
 	Server ServerConf `flag:"server" toml:"server" json:"server"`
 	Mysql  MysqlConf  `flag:"mysql" toml:"mysql" json:"mysql"`
 	Redis  RedisConf  `flag:"redis" toml:"redis" json:"redis"`
 	Static StaticConf `flag:"static" toml:"static" json:"static"`
+	QiNiu  QiNiuConf  `flag:"qiniu" toml:"qiniu" json:"qiniu"`
 }
 
 func NewConfig() *Config {

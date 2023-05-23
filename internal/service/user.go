@@ -6,8 +6,10 @@ import (
 	"ji/internal/model"
 	"ji/internal/serializer"
 	"ji/pkg/e"
-	"ji/pkg/storages/localstroage"
+	"ji/pkg/storages/qiniu"
 	"ji/pkg/utils/tokenutil.go"
+	"strconv"
+	"strings"
 
 	"mime/multipart"
 	"time"
@@ -19,13 +21,14 @@ import (
 type UserService struct {
 	userDao      *dao.UserDao
 	activityDao  *dao.ActivityDao
-	localstroage *localstroage.LocalStroage
+	qiniuStroage *qiniu.QiNiuStroage
 }
 
-func NewUserService(ud *dao.UserDao, ad *dao.ActivityDao) *UserService {
+func NewUserService(ud *dao.UserDao, ad *dao.ActivityDao, qs *qiniu.QiNiuStroage) *UserService {
 	return &UserService{
-		userDao:     ud,
-		activityDao: ad,
+		userDao:      ud,
+		activityDao:  ad,
+		qiniuStroage: qs,
 	}
 }
 
@@ -168,25 +171,25 @@ func (service UserService) GetUserById(ctx context.Context, uId uint) serializer
 	}
 }
 
-func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file multipart.File, fileSize int64) serializer.Response {
+func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
 	code := e.SUCCESS
-	var user *model.User
 	var err error
 
-	// userDao := dao.NewUserDao(ctx)
-	user, err = service.userDao.GetUserById(uId)
-	if err != nil {
-		logrus.Info(err)
-		code = e.ErrorDatabase
-		return serializer.Response{
-			Status: code,
-			Msg:    e.GetMsg(code),
-			Error:  err.Error(),
+	//重命名文件的名称
+	timestamp := time.Now().Unix()
+	tm := time.Unix(timestamp, 0)
+	ti := tm.Format("2006010203040501")
+	//提取文件后缀类型
+	var ext string
+	if pos := strings.LastIndexByte(fileHeader.Filename, '.'); pos != -1 {
+		ext = fileHeader.Filename[pos:]
+		if ext == "." {
+			ext = ""
 		}
 	}
-	var path string
+	filename := "user_avatar/" + strconv.Itoa(int(uId)) + "_" + ti + "_" + strconv.FormatInt(time.Now().Unix(), 10) + ext
 
-	path, err = service.localstroage.UploadAvatarToLocalStatic(file, uId, user.UserName)
+	path, err := service.qiniuStroage.UploadToQiNiu(filename, file, fileHeader.Size)
 
 	if err != nil {
 		code = e.ErrorUploadFile
@@ -197,20 +200,9 @@ func (service *UserService) UploadUserAvatar(ctx context.Context, uId uint, file
 		}
 	}
 
-	user.Avatar = path
-	err = service.userDao.UpdateUserAvatarById(uId, path)
-	if err != nil {
-		logrus.Info(err)
-		code = e.ErrorDatabase
-		return serializer.Response{
-			Status: code,
-			Msg:    e.GetMsg(code),
-			Error:  err.Error(),
-		}
-	}
 	return serializer.Response{
 		Status: code,
-		Data:   serializer.BuildUser(user),
+		Data:   path,
 		Msg:    e.GetMsg(code),
 	}
 }

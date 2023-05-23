@@ -18,6 +18,7 @@ import (
 	"ji/pkg/redis"
 	"ji/pkg/server"
 	"ji/pkg/storages/localstroage"
+	"ji/pkg/storages/qiniu"
 )
 
 // Injectors from wire.go:
@@ -33,7 +34,8 @@ func CreateServer() (*server.Server, error) {
 		return nil, err
 	}
 	activityService := service.NewActivityService(userDao, activityDao, pool)
-	userService := service.NewUserService(userDao, activityDao)
+	qiNiuStroage := qiniu.NewQiNiuStroage(configConfig)
+	userService := service.NewUserService(userDao, activityDao, qiNiuStroage)
 	activityController := v1.NewActivityContrller(loggerLogger, activityService, userService)
 	userController := v1.NewUserContrller(loggerLogger, activityService, userService)
 	engine := routes.NewRouter(activityController, userController)
@@ -43,4 +45,4 @@ func CreateServer() (*server.Server, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(server.ServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ActivityControllerProviderSet, v1.UserControllerProviderSet, service.UserServiceProviderSet, service.ActivityServiceProviderSet, database.DatabaseProviderSet, dao.UserDaoProviderSet, dao.ActivityDaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet)
+var providerSet = wire.NewSet(server.ServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ActivityControllerProviderSet, v1.UserControllerProviderSet, service.UserServiceProviderSet, service.ActivityServiceProviderSet, database.DatabaseProviderSet, dao.UserDaoProviderSet, dao.ActivityDaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet)

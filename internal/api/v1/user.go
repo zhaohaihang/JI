@@ -102,16 +102,15 @@ func (uc *UserController) ViewUser(c *gin.Context) {
 // @Param file formData file true "图片文件"
 // @Param Authorization header string true "Authorization header parameter"
 // @Success 200 {object} serializer.Response{data=serializer.User}
-// @Router /api/v1/user/avatar [post]
+// @Router /api/v1/user/avatar [put]
 func (uc *UserController) UploadUserAvatar(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
 		uc.log.Logrus.Infoln(err)
 	} else {
-		fileSize := fileHeader.Size
 		claims := tokenutil.GetTokenClaimsFromContext(c)
-		res := uc.userService.UploadUserAvatar(c.Request.Context(), claims.UserID, file, fileSize)
+		res := uc.userService.UploadUserAvatar(c.Request.Context(), claims.UserID, file, fileHeader)
 		c.JSON(http.StatusOK, res)
 	}
 }

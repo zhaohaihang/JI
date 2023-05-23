@@ -21,3 +21,9 @@ redis_pw = ""
 static_host = "http://127.0.0.1"
 static_port = ":4000"
 avatar_path = "/static/imgs/avatar/"
+
+[qiniu]
+access_key = "***"
+serect_key = "***"
+bucket = "***"
+domain = "***"
