@@ -16,23 +16,23 @@ type Point struct {
 	Lng float64 `form:"lng" json:"lng" binding:"longitude"`
 }
 type UpdateUserInfo struct {
-	Biography string `form:"biography" json:"biography" binding:"max=1000"`
-	Address   string `form:"address" json:"address" binding:"max=1000"`
-	Email     string `form:"email" json:"email" binding:"email"`
-	Phone     string `form:"phone" json:"phone" binding:"phone"`
-	Location  Point  `form:"location" json:"location"`
-	Extra     string `form:"extra" json:"extra" binding:"max=1000"`
+	Biography string `form:"biography" json:"biography" binding:"omitempty,max=1000"`
+	Address   string `form:"address" json:"address" binding:"omitempty,max=1000"`
+	Email     string `form:"email" json:"email" binding:"omitempty,email"`
+	Phone     string `form:"phone" json:"phone" binding:"omitempty,phone"`
+	Location  Point  `form:"location" json:"location" binding:"omitempty,max=1000"`
+	Extra     string `form:"extra" json:"extra" binding:"omitempty,max=1000"`
 }
 
 type CreateActivityInfo struct {
-	Title          string `form:"title" json:"title" binding:"max=30"`
-	Introduction   string `form:"introduction" json:"introduction" binding:"max=1000"`
+	Title          string `form:"title" json:"title" binding:"required,min=2,max=30"`
+	Introduction   string `form:"introduction" json:"introduction" binding:"omitempty,max=1000"`
 	Status         int    `form:"status" json:"status" binding:"required,oneof=1 2 3"`
-	StartTime      int64  `form:"start_time" json:"start_time"  binding:"required"`
-	EndTime        int64  `form:"end_time" json:"end_time"  binding:"required"`
-	Location       Point  `form:"location" json:"location"`
-	ExpectedNumber uint   `form:"expected_number" json:"expected_number" `
-	Cover          string `form:"cover" json:"cover" `
+	StartTime      int64  `form:"start_time" json:"start_time"  binding:"required,ltfield=EndTime"`
+	EndTime        int64  `form:"end_time" json:"end_time"  binding:"required,gtfield=StartTime"`
+	Location       Point  `form:"location" json:"location" `
+	ExpectedNumber uint   `form:"expected_number" json:"expected_number" binding:"required,max=1000"`
+	Cover          string `form:"cover" json:"cover" binding:"omitempty,max=1000" `
 }
 
 type NearInfo struct {
@@ -42,6 +42,6 @@ type NearInfo struct {
 
 type ChangePasswdInfo struct {
 	OldPasswd string `form:"old_passwd" json:"old_passwd" binding:"required,min=8,max=20"`
-	NewPasswd string `form:"new_passwd" json:"new_passwd" binding:"required,min=8,max=20"`
-	RePasswd  string `form:"re_passwd" json:"re_passwd" binding:"required,min=8,max=20"`
+	NewPasswd string `form:"new_passwd" json:"new_passwd" binding:"required,min=8,max=20,eqfield=RePasswd"`
+	RePasswd  string `form:"re_passwd" json:"re_passwd" binding:"required,min=8,max=20,eqfield=NewPasswd"`
 }
