@@ -43,7 +43,7 @@ func (ac *ActivityController) CreateActivity(c *gin.Context) {
 	var createActivityInfo serializer.CreateActivityInfo
 	claims := tokenutil.GetTokenClaimsFromContext(c)
 	if err := c.ShouldBind(&createActivityInfo); err == nil {
-		res := ac.activityService.CreateActivity(c.Request.Context(), claims.UserID, createActivityInfo)
+		res := ac.activityService.CreateActivity(claims.UserID, createActivityInfo)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -63,7 +63,7 @@ func (ac *ActivityController) CreateActivity(c *gin.Context) {
 func (ac *ActivityController) ShowActivity(c *gin.Context) {
 	aIdStr := c.Param("aid")
 	if aId, err := strconv.ParseUint(aIdStr, 10, 32); err == nil {
-		res := ac.activityService.GetActivityById(c.Request.Context(), uint(aId))
+		res := ac.activityService.GetActivityById(uint(aId))
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -85,7 +85,7 @@ func (ac *ActivityController) ShowActivity(c *gin.Context) {
 func (ac *ActivityController) ListNearActivity(c *gin.Context) {
 	var nearInfo serializer.NearInfo
 	if err := c.ShouldBindQuery(nearInfo); err == nil {
-		ac.activityService.ListNearActivity(c.Request.Context(), nearInfo)
+		ac.activityService.ListNearActivity(nearInfo)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
 		ac.log.Logrus.Infoln(err)
@@ -110,7 +110,7 @@ func (ac *ActivityController) UploadActivityCover(c *gin.Context) {
 		ac.log.Logrus.Infoln(err)
 	} else {
 		claims := tokenutil.GetTokenClaimsFromContext(c)
-		res := ac.activityService.UploadActivityCover(c.Request.Context(), claims.UserID, file, fileHeader)
+		res := ac.activityService.UploadActivityCover(claims.UserID, file, fileHeader)
 		c.JSON(http.StatusOK, res)
 	}
 }

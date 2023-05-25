@@ -63,7 +63,7 @@ func (uc *UserController) UserUpdate(c *gin.Context) {
 	var updateUserInfo serializer.UpdateUserInfo
 	claims := tokenutil.GetTokenClaimsFromContext(c)
 	if err := c.ShouldBind(&updateUserInfo); err == nil {
-		res := uc.userService.UpdateUserById(c.Request.Context(), claims.UserID, updateUserInfo)
+		res := uc.userService.UpdateUserById(claims.UserID, updateUserInfo)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -85,7 +85,7 @@ func (uc *UserController) ViewUser(c *gin.Context) {
 	uIdStr := c.Param("uid")
 
 	if uId, err := strconv.ParseUint(uIdStr, 10, 32); err == nil {
-		res := uc.userService.GetUserById(c.Request.Context(), uint(uId))
+		res := uc.userService.GetUserById(uint(uId))
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
@@ -110,7 +110,7 @@ func (uc *UserController) UploadUserAvatar(c *gin.Context) {
 		uc.log.Logrus.Infoln(err)
 	} else {
 		claims := tokenutil.GetTokenClaimsFromContext(c)
-		res := uc.userService.UploadUserAvatar(c.Request.Context(), claims.UserID, file, fileHeader)
+		res := uc.userService.UploadUserAvatar(claims.UserID, file, fileHeader)
 		c.JSON(http.StatusOK, res)
 	}
 }
@@ -131,7 +131,7 @@ func (uc *ActivityController) ListUserActivity(c *gin.Context) {
 	uIdStr := c.Param("uid")
 	c.ShouldBindQuery(basePage)
 	if uId, err := strconv.ParseUint(uIdStr, 10, 32); err == nil {
-		res := uc.activityService.ListActivityByUserId(c.Request.Context(), uint(uId), basePage)
+		res := uc.activityService.ListActivityByUserId( uint(uId), basePage)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))

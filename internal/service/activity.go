@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"ji/internal/dao"
 	"ji/internal/model"
 	"ji/internal/serializer"
@@ -36,7 +35,7 @@ func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao, rp *redis.Pool, qs
 
 var ActivityServiceProviderSet = wire.NewSet(NewActivityService)
 
-func (service *ActivityService) CreateActivity(ctx context.Context, uId uint, activityInfo serializer.CreateActivityInfo) serializer.Response {
+func (service *ActivityService) CreateActivity(uId uint, activityInfo serializer.CreateActivityInfo) serializer.Response {
 
 	code := e.SUCCESS
 	// activityDao := dao.NewActivityDao(ctx)
@@ -82,7 +81,7 @@ func (service *ActivityService) CreateActivity(ctx context.Context, uId uint, ac
 	}
 }
 
-func (service *ActivityService) GetActivityById(ctx context.Context, aId uint) serializer.Response {
+func (service *ActivityService) GetActivityById(aId uint) serializer.Response {
 	code := e.SUCCESS
 	activity, err := service.activityDao.GetActivityById(aId)
 	if err != nil {
@@ -100,9 +99,8 @@ func (service *ActivityService) GetActivityById(ctx context.Context, aId uint) s
 	}
 }
 
-func (service *ActivityService) ListActivityByUserId(ctx context.Context, uId uint, basePage serializer.BasePage) serializer.Response {
+func (service *ActivityService) ListActivityByUserId(uId uint, basePage serializer.BasePage) serializer.Response {
 	code := e.SUCCESS
-	// activityDao := dao.NewActivityDao(ctx)
 	activitys, total, err := service.activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
 	if err != nil {
 		logrus.Info(err)
@@ -115,7 +113,7 @@ func (service *ActivityService) ListActivityByUserId(ctx context.Context, uId ui
 	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
 }
 
-func (service *ActivityService) ListNearActivity(ctx context.Context, nearInfo serializer.NearInfo) serializer.Response {
+func (service *ActivityService) ListNearActivity(nearInfo serializer.NearInfo) serializer.Response {
 	code := e.SUCCESS
 	// activityDao := dao.NewActivityDao(ctx)
 	activitys, total, err := service.activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
@@ -130,7 +128,7 @@ func (service *ActivityService) ListNearActivity(ctx context.Context, nearInfo s
 	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
 }
 
-func (service *ActivityService) UploadActivityCover(ctx context.Context, uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
+func (service *ActivityService) UploadActivityCover(uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
 	code := e.SUCCESS
 	var err error
 
