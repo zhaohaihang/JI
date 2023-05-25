@@ -1,13 +1,10 @@
-package server
+package http
 
 import (
 	"context"
 	"fmt"
 	"ji/config"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -16,22 +13,22 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Server struct {
+type HttpServer struct {
 	config     *config.Config
 	router     *gin.Engine
 	httpServer *http.Server
 }
 
-func NewServer(c *config.Config, r *gin.Engine) *Server {
-	return &Server{
+func NewHttpServer(c *config.Config, r *gin.Engine) *HttpServer {
+	return &HttpServer{
 		config: c,
 		router: r,
 	}
 }
 
-var ServerProviderSet = wire.NewSet(NewServer)
+var HttpServerProviderSet = wire.NewSet(NewHttpServer)
 
-func (s *Server) Start() error {
+func (s *HttpServer) Start() error {
 	s.httpServer = &http.Server{Addr: fmt.Sprintf("%s%s", s.config.Server.ServerHost, s.config.Server.ServerPort), Handler: s.router}
 	logrus.Info("http server starting...")
 	go func() {
@@ -43,7 +40,7 @@ func (s *Server) Start() error {
 	return nil
 }
 
-func (s *Server) Stop() error {
+func (s *HttpServer) Stop() error {
 	logrus.Info("stopping http server")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*5) // 平滑关闭,等待5秒钟处理
 	defer cancel()
@@ -53,20 +50,4 @@ func (s *Server) Stop() error {
 	}
 
 	return nil
-}
-
-func (s *Server) AwaitSignal() {
-	c := make(chan os.Signal, 1)
-	signal.Reset(syscall.SIGTERM, syscall.SIGINT)
-	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
-
-	signal := <-c
-	logrus.Infof("receive a signal signal:%s", signal.String())
-	if s.httpServer != nil {
-		if err := s.Stop(); err != nil {
-			logrus.Warnf("stop http server error:%s", err.Error())
-		}
-	}
-
-	os.Exit(0)
 }

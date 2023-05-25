@@ -5,7 +5,6 @@ import (
 	"ji/internal/model"
 	"ji/pkg/database"
 
-	"github.com/google/wire"
 	"gorm.io/gorm"
 )
 
@@ -18,8 +17,6 @@ func NewActivityDao(db *database.Database) *ActivityDao {
 		DB: db.Mysql,
 	}
 }
-
-var ActivityDaoProviderSet = wire.NewSet(NewActivityDao)
 
 func (activityDao *ActivityDao) CreateActivity(activity *model.Activity) error {
 	return activityDao.DB.Model(&model.Activity{}).Create(&activity).Error

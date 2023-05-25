@@ -8,22 +8,24 @@ package main
 
 import (
 	"github.com/google/wire"
+	"ji/app"
 	"ji/config"
 	"ji/internal/api/v1"
+	"ji/internal/cron"
 	"ji/internal/dao"
-	"ji/routes"
+	"ji/internal/http"
+	"ji/internal/routes"
 	"ji/internal/service"
 	"ji/pkg/database"
 	"ji/pkg/logger"
 	"ji/pkg/redis"
-	"ji/server"
 	"ji/pkg/storages/localstroage"
 	"ji/pkg/storages/qiniu"
 )
 
 // Injectors from wire.go:
 
-func CreateServer() (*server.Server, error) {
+func CreateApp() (*app.App, error) {
 	configConfig := config.NewConfig()
 	loggerLogger := logger.NewLogger()
 	databaseDatabase := database.NewDatabase(configConfig)
@@ -39,10 +41,13 @@ func CreateServer() (*server.Server, error) {
 	activityController := v1.NewActivityContrller(loggerLogger, activityService, userService)
 	userController := v1.NewUserContrller(loggerLogger, activityService, userService)
 	engine := routes.NewRouter(activityController, userController)
-	serverServer := server.NewServer(configConfig, engine)
-	return serverServer, nil
+	httpServer := http.NewHttpServer(configConfig, engine)
+	tasks := cron.NewTasks(userDao, activityDao)
+	cronServer := cron.NewCronServer(tasks)
+	appApp := app.NewApp(configConfig, engine, httpServer, cronServer)
+	return appApp, nil
 }
 
 // wire.go:
 
-var providerSet = wire.NewSet(server.ServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ActivityControllerProviderSet, v1.UserControllerProviderSet, service.UserServiceProviderSet, service.ActivityServiceProviderSet, database.DatabaseProviderSet, dao.UserDaoProviderSet, dao.ActivityDaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet)
+var providerSet = wire.NewSet(app.AppProviderSet, http.HttpServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ControllerProviderSet, service.ServiceProviderSet, database.DatabaseProviderSet, dao.DaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet, cron.CronServerProviderSet)

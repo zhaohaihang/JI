@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/wire"
 )
 
 type ActivityController struct {
@@ -26,8 +25,6 @@ func NewActivityContrller(log *logger.Logger, as *service.ActivityService, us *s
 		userService:     us,
 	}
 }
-
-var ActivityControllerProviderSet = wire.NewSet(NewActivityContrller)
 
 // CreateActivity godoc
 // @Summary 创建活动
@@ -91,7 +88,6 @@ func (ac *ActivityController) ListNearActivity(c *gin.Context) {
 		ac.log.Logrus.Infoln(err)
 	}
 }
-
 
 // UploadActivityCover godoc
 // @Summary 上传活动图片

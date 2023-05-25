@@ -10,7 +10,6 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/wire"
 )
 
 type UserController struct {
@@ -26,8 +25,6 @@ func NewUserContrller(log *logger.Logger, as *service.ActivityService, us *servi
 		userService:     us,
 	}
 }
-
-var UserControllerProviderSet = wire.NewSet(NewUserContrller)
 
 // UserLogin godoc
 // @Summary 用户登录
@@ -131,14 +128,13 @@ func (uc *ActivityController) ListUserActivity(c *gin.Context) {
 	uIdStr := c.Param("uid")
 	c.ShouldBindQuery(basePage)
 	if uId, err := strconv.ParseUint(uIdStr, 10, 32); err == nil {
-		res := uc.activityService.ListActivityByUserId( uint(uId), basePage)
+		res := uc.activityService.ListActivityByUserId(uint(uId), basePage)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
 		uc.log.Logrus.Infoln(err)
 	}
 }
-
 
 // ChangePasswd godoc
 // @Summary  修改密码

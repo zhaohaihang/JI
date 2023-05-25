@@ -3,15 +3,17 @@
 package main
 
 import (
+	"ji/app"
 	"ji/config"
 	v1 "ji/internal/api/v1"
+	"ji/internal/cron"
 	"ji/internal/dao"
-	"ji/routes"
+	"ji/internal/http"
+	"ji/internal/routes"
 	"ji/internal/service"
 	"ji/pkg/database"
 	"ji/pkg/logger"
 	"ji/pkg/redis"
-	"ji/server"
 	"ji/pkg/storages/localstroage"
 	"ji/pkg/storages/qiniu"
 
@@ -19,23 +21,22 @@ import (
 )
 
 var providerSet = wire.NewSet(
-	server.ServerProviderSet,
+	app.AppProviderSet,
+	http.HttpServerProviderSet,
 	config.ConfigProviderSet,
 	routes.RouterProviderSet,
-	v1.ActivityControllerProviderSet,
-	v1.UserControllerProviderSet,
-	service.UserServiceProviderSet,
-	service.ActivityServiceProviderSet,
+	v1.ControllerProviderSet,
+	service.ServiceProviderSet,
 	database.DatabaseProviderSet,
-	dao.UserDaoProviderSet,
-	dao.ActivityDaoProviderSet,
+	dao.DaoProviderSet,
 	logger.LoggerProviderSet,
 	localstroage.LocalStroageProviderSet,
 	redis.RedisPoolProviderSet,
 	qiniu.QiNiuStroageProviderSet,
-
+	cron.CronServerProviderSet,
 )
 
-func CreateServer() (*server.Server, error) {
+func CreateApp() (*app.App, error) {
 	panic(wire.Build(providerSet))
 }
+

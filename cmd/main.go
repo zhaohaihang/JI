@@ -20,12 +20,12 @@ package main
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	server, err := CreateServer()
+	app, err := CreateApp()
 	if err != nil {
 		panic(err)
 	}
-	if err = server.Start() ;err != nil {
+	if err = app.Start() ;err != nil {
 		panic(err)
 	}
-	server.AwaitSignal()
+	app.AwaitSignal()
 }

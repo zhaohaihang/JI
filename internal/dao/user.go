@@ -4,7 +4,6 @@ import (
 	"ji/internal/model"
 	"ji/pkg/database"
 
-	"github.com/google/wire"
 	"gorm.io/gorm"
 )
 
@@ -16,12 +15,6 @@ func NewUserDao(db *database.Database) *UserDao {
 	return &UserDao{
 		DB: db.Mysql,
 	}
-}
-
-var UserDaoProviderSet = wire.NewSet(NewUserDao)
-
-func NewUserDaoByDB(db *gorm.DB) *UserDao {
-	return &UserDao{db}
 }
 
 // GetUserById 根据 id 获取用户
