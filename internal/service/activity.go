@@ -4,6 +4,7 @@ import (
 	"ji/internal/dao"
 	"ji/internal/model"
 	"ji/internal/serializer"
+	"ji/pkg/consts"
 	"ji/pkg/e"
 	"ji/pkg/storages/qiniu"
 	"mime/multipart"
@@ -35,13 +36,11 @@ func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao, rp *redis.Pool, qs
 
 var ActivityServiceProviderSet = wire.NewSet(NewActivityService)
 
-func (service *ActivityService) CreateActivity(uId uint, activityInfo serializer.CreateActivityInfo) serializer.Response {
+func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.CreateActivityInfo) serializer.Response {
 
 	code := e.SUCCESS
-	// activityDao := dao.NewActivityDao(ctx)
-	// userDao := dao.NewUserDao(ctx)
 
-	user, err := service.userDao.GetUserById(uId)
+	user, err := as.userDao.GetUserById(uId)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -50,11 +49,11 @@ func (service *ActivityService) CreateActivity(uId uint, activityInfo serializer
 			Msg:    e.GetMsg(code),
 		}
 	}
-
+ 
 	activity := &model.Activity{
 		Title:          activityInfo.Title,
 		Introduction:   activityInfo.Introduction,
-		Status:         activityInfo.Status,
+		Status:         consts.ACTIVITY_STATUS_NOSTART,
 		StartTime:      activityInfo.StartTime,
 		EndTime:        activityInfo.EndTime,
 		Location:       model.Point(activityInfo.Location),
@@ -65,7 +64,7 @@ func (service *ActivityService) CreateActivity(uId uint, activityInfo serializer
 		UserAvatar:     user.Avatar,
 	}
 
-	if err := service.activityDao.CreateActivity(activity); err != nil {
+	if err := as.activityDao.CreateActivity(activity); err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
@@ -81,9 +80,9 @@ func (service *ActivityService) CreateActivity(uId uint, activityInfo serializer
 	}
 }
 
-func (service *ActivityService) GetActivityById(aId uint) serializer.Response {
+func (as *ActivityService) GetActivityById(aId uint) serializer.Response {
 	code := e.SUCCESS
-	activity, err := service.activityDao.GetActivityById(aId)
+	activity, err := as.activityDao.GetActivityById(aId)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -99,9 +98,9 @@ func (service *ActivityService) GetActivityById(aId uint) serializer.Response {
 	}
 }
 
-func (service *ActivityService) ListActivityByUserId(uId uint, basePage serializer.BasePage) serializer.Response {
+func (as *ActivityService) ListActivityByUserId(uId uint, basePage serializer.BasePage) serializer.Response {
 	code := e.SUCCESS
-	activitys, total, err := service.activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
+	activitys, total, err := as.activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -113,10 +112,10 @@ func (service *ActivityService) ListActivityByUserId(uId uint, basePage serializ
 	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
 }
 
-func (service *ActivityService) ListNearActivity(nearInfo serializer.NearInfo) serializer.Response {
+func (as *ActivityService) ListNearActivity(nearInfo serializer.NearInfo) serializer.Response {
 	code := e.SUCCESS
 	// activityDao := dao.NewActivityDao(ctx)
-	activitys, total, err := service.activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
+	activitys, total, err := as.activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
 	if err != nil {
 		logrus.Info(err)
 		code = e.ErrorDatabase
@@ -128,7 +127,7 @@ func (service *ActivityService) ListNearActivity(nearInfo serializer.NearInfo) s
 	return serializer.BuildListResponse(serializer.BuildActivitys(activitys), uint(total))
 }
 
-func (service *ActivityService) UploadActivityCover(uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
+func (as *ActivityService) UploadActivityCover(uId uint, file multipart.File, fileHeader *multipart.FileHeader) serializer.Response {
 	code := e.SUCCESS
 	var err error
 
@@ -146,7 +145,7 @@ func (service *ActivityService) UploadActivityCover(uId uint, file multipart.Fil
 	}
 	filename := "activity_bg/" + strconv.Itoa(int(uId)) + "_" + ti + "_" + strconv.FormatInt(time.Now().Unix(), 10) + ext
 
-	path, err := service.qiniuStroage.UploadToQiNiu(filename, file, fileHeader.Size)
+	path, err := as.qiniuStroage.UploadToQiNiu(filename, file, fileHeader.Size)
 
 	if err != nil {
 		code = e.ErrorUploadFile

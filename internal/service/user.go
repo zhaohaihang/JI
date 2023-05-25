@@ -4,6 +4,7 @@ import (
 	"ji/internal/dao"
 	"ji/internal/model"
 	"ji/internal/serializer"
+	"ji/pkg/consts"
 	"ji/pkg/e"
 	"ji/pkg/storages/qiniu"
 	"ji/pkg/utils/tokenutil"
@@ -52,7 +53,7 @@ func (us *UserService) Login(loginUserInfo serializer.LoginUserInfo) serializer.
 			UserName: loginUserInfo.UserName,
 			Status:   model.ACTIVE,
 		}
-		if loginUserInfo.Type == LOGIN_TYPE_EMAIL {
+		if loginUserInfo.Type == consts.LOGIN_TYPE_EMAIL {
 			user.Phone = loginUserInfo.UserName
 		} else {
 			user.Email = loginUserInfo.UserName
