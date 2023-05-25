@@ -25,7 +25,7 @@ type User struct {
 
 const (
 	PassWordCost = 12       //密码加密难度
-	Active       = "active" //激活用户
+	ACTIVE       = "active" //激活用户
 )
 
 func (user *User) BeforeSave(db *gorm.DB) error {

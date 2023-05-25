@@ -9,7 +9,8 @@ const (
 	InvalidParams         = 400
 
 	// 用户错误
-	ErrorPasswordNotCompare = 10004
+	ErrorPasswordNotCompare = 10001
+	ErrorUserCreate = 10002
 
 	// 活动错误
 

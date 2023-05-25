@@ -41,7 +41,7 @@ var UserControllerProviderSet = wire.NewSet(NewUserContrller)
 func (uc *UserController) UserLogin(c *gin.Context) {
 	var loginUserInfo serializer.LoginUserInfo
 	if err := c.ShouldBind(&loginUserInfo); err == nil {
-		res := uc.userService.Login(c.Request.Context(), loginUserInfo)
+		res := uc.userService.Login(loginUserInfo)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))

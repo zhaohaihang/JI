@@ -35,10 +35,10 @@ func NewUserService(ud *dao.UserDao, ad *dao.ActivityDao, qs *qiniu.QiNiuStroage
 var UserServiceProviderSet = wire.NewSet(NewUserService)
 
 // Login 用户登陆函数
-func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.LoginUserInfo) serializer.Response {
+func (service *UserService) Login(loginUserInfo serializer.LoginUserInfo) serializer.Response {
 	var user *model.User
 	code := e.SUCCESS
-	// userDao := dao.NewUserDao(ctx)
+	
 	user, exist, _ := service.userDao.ExistOrNotByUserName(loginUserInfo.UserName)
 	if exist { // 如果存在，则校验密码
 		if !user.CheckPassword(loginUserInfo.Password) {
@@ -51,10 +51,9 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 	} else { // 如果不存在则新建
 		user = &model.User{
 			UserName: loginUserInfo.UserName,
-			Status:   model.Active,
+			Status:   model.ACTIVE,
 		}
-		user.Avatar = "avatar.jpg"
-		if loginUserInfo.Type == 0 {
+		if loginUserInfo.Type == LOGIN_TYPE_EMAIL {
 			user.Phone = loginUserInfo.UserName
 		} else {
 			user.Email = loginUserInfo.UserName
@@ -62,7 +61,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		// 加密密码
 		if err := user.SetPassword(loginUserInfo.Password); err != nil {
 			logrus.Info(err)
-			code = e.SUCCESS
+			code = e.ErrorUserCreate
 			return serializer.Response{
 				Status: code,
 				Msg:    e.GetMsg(code),
@@ -91,7 +90,7 @@ func (service *UserService) Login(ctx context.Context, loginUserInfo serializer.
 		}
 	}
 
-	service.userDao.UpdateLastLoginById(user.ID, time.Now().UnixMilli())
+	go service.userDao.UpdateLastLoginById(user.ID, time.Now().UnixMilli())
 
 	return serializer.Response{
 		Status: code,

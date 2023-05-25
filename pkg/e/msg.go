@@ -8,6 +8,7 @@ var MsgFlags = map[int]string{
 	InvalidParams:         "请求参数错误",
 
 	ErrorPasswordNotCompare: "账号密码错误",
+	ErrorUserCreate:         "创建用户错误",
 
 	ErrorAuthCheckTokenFail:        "Token鉴权失败",
 	ErrorAuthCheckTokenTimeout:     "Token已超时",
