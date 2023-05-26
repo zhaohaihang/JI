@@ -19,6 +19,7 @@ import (
 
 func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
 	r := gin.Default()
+	r.Use(middleware.Logger())
 	r.Use(middleware.Cors())
 	r.StaticFS("/static", http.Dir("../static"))
 
@@ -41,11 +42,11 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
 		authed.Use(middleware.JWT())
 		{
 			authed.PUT("user", uc.UserUpdate)
-			authed.PUT("user/changepasswd",uc.ChangePasswd)
-			authed.POST("user/avatar",  uc.UploadUserAvatar)
+			authed.PUT("user/changepasswd", uc.ChangePasswd)
+			authed.POST("user/avatar", uc.UploadUserAvatar)
 
-			authed.POST("activity",ac.CreateActivity)
-			authed.PUT("activity/cover",ac.UploadActivityCover)
+			authed.POST("activity", ac.CreateActivity)
+			authed.PUT("activity/cover", ac.UploadActivityCover)
 		}
 	}
 	return r

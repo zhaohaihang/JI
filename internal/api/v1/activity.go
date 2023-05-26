@@ -3,22 +3,22 @@ package v1
 import (
 	"ji/internal/serializer"
 	"ji/internal/service"
-	"ji/pkg/logger"
 	"ji/pkg/utils/tokenutil"
 
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type ActivityController struct {
-	log             *logger.Logger
+	log             *logrus.Logger
 	activityService *service.ActivityService
 	userService     *service.UserService
 }
 
-func NewActivityContrller(log *logger.Logger, as *service.ActivityService, us *service.UserService) *ActivityController {
+func NewActivityContrller(log *logrus.Logger, as *service.ActivityService, us *service.UserService) *ActivityController {
 	return &ActivityController{
 		log:             log,
 		activityService: as,
@@ -44,7 +44,7 @@ func (ac *ActivityController) CreateActivity(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		ac.log.Logrus.Infoln(err)
+		ac.log.Infoln(err)
 	}
 }
 
@@ -64,7 +64,7 @@ func (ac *ActivityController) ShowActivity(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		ac.log.Logrus.Infoln(err)
+		ac.log.Infoln(err)
 	}
 }
 
@@ -85,7 +85,7 @@ func (ac *ActivityController) ListNearActivity(c *gin.Context) {
 		ac.activityService.ListNearActivity(nearInfo)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		ac.log.Logrus.Infoln(err)
+		ac.log.Infoln(err)
 	}
 }
 
@@ -103,7 +103,7 @@ func (ac *ActivityController) UploadActivityCover(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		ac.log.Logrus.Infoln(err)
+		ac.log.Infoln(err)
 	} else {
 		claims := tokenutil.GetTokenClaimsFromContext(c)
 		res := ac.activityService.UploadActivityCover(claims.UserID, file, fileHeader)

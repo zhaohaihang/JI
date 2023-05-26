@@ -10,26 +10,24 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type Logger struct{
-	Logrus *logrus.Logger
-}
+var Logrus *logrus.Logger
 
-func NewLogger() *Logger {
 
-	var log Logger
+func NewLogger() *logrus.Logger {
+
 	// 实例化
 	logger := logrus.New()
 	src, _ := setOutputFile()
 	// 设置输出
 	logger.Out = src
 	// 设置日志级别
-	logger.SetLevel(logrus.DebugLevel)
+	logger.SetLevel(logrus.InfoLevel)
 	// 设置日志格式
 	logger.SetFormatter(&logrus.TextFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
-	log.Logrus = logger
-	return &log
+	Logrus = logger
+	return logger
 }
 
 var LoggerProviderSet = wire.NewSet(NewLogger)
