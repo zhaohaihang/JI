@@ -8,11 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/google/wire"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
+
 	"gorm.io/gorm/schema"
 	"gorm.io/plugin/dbresolver"
 )
@@ -21,7 +19,7 @@ type Database struct {
 	Mysql *gorm.DB
 }
 
-func NewDatabase(config *config.Config) *Database {
+func NewDatabase(config *config.Config,gl *GormLogger) *Database {
 	dbUser := config.Mysql.DbUser
 	dbPassWord := config.Mysql.DbPassWord
 	dbHost := config.Mysql.DbHost
@@ -33,12 +31,6 @@ func NewDatabase(config *config.Config) *Database {
 	pathRead := strings.Join([]string{dbUser, ":", dbPassWord, "@tcp(", dbHost, ":", dbPort, ")/", dbName, "?charset=utf8&parseTime=true"}, "")
 	pathWrite := strings.Join([]string{dbUser, ":", dbPassWord, "@tcp(", dbHost, ":", dbPort, ")/", dbName, "?charset=utf8&parseTime=true"}, "")
 
-	var ormLogger logger.Interface
-	if gin.Mode() == "debug" {
-		ormLogger = logger.Default.LogMode(logger.Info)
-	} else {
-		ormLogger = logger.Default
-	}
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       pathRead, // DSN data source name
 		DefaultStringSize:         256,      // string 类型字段的默认长度
@@ -47,7 +39,7 @@ func NewDatabase(config *config.Config) *Database {
 		DontSupportRenameColumn:   true,     // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
 		SkipInitializeWithVersion: false,    // 根据版本自动配置
 	}), &gorm.Config{
-		Logger: ormLogger,
+		Logger: gl,
 		NamingStrategy: schema.NamingStrategy{
 			SingularTable: true,
 		},
@@ -81,4 +73,4 @@ func NewDatabase(config *config.Config) *Database {
 
 }
 
-var DatabaseProviderSet = wire.NewSet(NewDatabase)
+

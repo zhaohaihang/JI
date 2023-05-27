@@ -19,7 +19,7 @@ import (
 )
 
 type ActivityService struct {
-	log          *logrus.Logger
+	logger       *logrus.Logger
 	userDao      *dao.UserDao
 	activityDao  *dao.ActivityDao
 	redisPool    *redis.Pool
@@ -27,13 +27,13 @@ type ActivityService struct {
 }
 
 func NewActivityService(
-	log *logrus.Logger,
+	l *logrus.Logger,
 	ud *dao.UserDao,
 	ad *dao.ActivityDao,
 	rp *redis.Pool,
 	qs *qiniu.QiNiuStroage) *ActivityService {
 	return &ActivityService{
-		log:          log,
+		logger:       l,
 		userDao:      ud,
 		activityDao:  ad,
 		redisPool:    rp,
@@ -49,7 +49,7 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 
 	user, err := as.userDao.GetUserById(uId)
 	if err != nil {
-		as.log.Info(err)
+		as.logger.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -72,7 +72,7 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 	}
 
 	if err := as.activityDao.CreateActivity(activity); err != nil {
-		as.log.Info(err)
+		as.logger.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -91,7 +91,7 @@ func (as *ActivityService) GetActivityById(aId uint) serializer.Response {
 	code := e.SUCCESS
 	activity, err := as.activityDao.GetActivityById(aId)
 	if err != nil {
-		as.log.Info(err)
+		as.logger.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -109,7 +109,7 @@ func (as *ActivityService) ListActivityByUserId(uId uint, basePage serializer.Ba
 	code := e.SUCCESS
 	activitys, total, err := as.activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
 	if err != nil {
-		as.log.Info(err)
+		as.logger.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -123,7 +123,7 @@ func (as *ActivityService) ListNearActivity(nearInfo serializer.NearInfo) serial
 	code := e.SUCCESS
 	activitys, total, err := as.activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
 	if err != nil {
-		as.log.Info(err)
+		as.logger.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -154,7 +154,7 @@ func (as *ActivityService) UploadActivityCover(uId uint, file multipart.File, fi
 	path, err := as.qiniuStroage.UploadToQiNiu(filename, file, fileHeader.Size)
 
 	if err != nil {
-		as.log.Info(err)
+		as.logger.Info(err)
 		code = e.ErrorUploadFile
 		return serializer.Response{
 			Status: code,

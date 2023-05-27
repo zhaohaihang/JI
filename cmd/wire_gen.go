@@ -28,7 +28,8 @@ import (
 func CreateApp() (*app.App, error) {
 	configConfig := config.NewConfig()
 	logrusLogger := logger.NewLogger()
-	databaseDatabase := database.NewDatabase(configConfig)
+	gormLogger := database.NewGormLogger(logrusLogger)
+	databaseDatabase := database.NewDatabase(configConfig, gormLogger)
 	userDao := dao.NewUserDao(databaseDatabase)
 	activityDao := dao.NewActivityDao(databaseDatabase)
 	pool, err := redis.NewRedisPool(configConfig)
@@ -42,7 +43,7 @@ func CreateApp() (*app.App, error) {
 	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
 	engine := routes.NewRouter(activityController, userController)
 	httpServer := http.NewHttpServer(configConfig, engine)
-	tasks := cron.NewTasks(userDao, activityDao)
+	tasks := cron.NewTasks(logrusLogger, userDao, activityDao)
 	cronServer := cron.NewCronServer(tasks)
 	appApp := app.NewApp(configConfig, engine, httpServer, cronServer)
 	return appApp, nil

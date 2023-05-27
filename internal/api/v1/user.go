@@ -13,14 +13,14 @@ import (
 )
 
 type UserController struct {
-	log             *logrus.Logger
+	logger          *logrus.Logger
 	activityService *service.ActivityService
 	userService     *service.UserService
 }
 
-func NewUserContrller(log *logrus.Logger, as *service.ActivityService, us *service.UserService) *UserController {
+func NewUserContrller(l *logrus.Logger, as *service.ActivityService, us *service.UserService) *UserController {
 	return &UserController{
-		log:             log,
+		logger:          l,
 		activityService: as,
 		userService:     us,
 	}
@@ -42,7 +42,7 @@ func (uc *UserController) UserLogin(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		uc.log.Infoln(err)
+		uc.logger.Infoln(err)
 	}
 }
 
@@ -64,7 +64,7 @@ func (uc *UserController) UserUpdate(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		uc.log.Infoln(err)
+		uc.logger.Infoln(err)
 	}
 }
 
@@ -86,7 +86,7 @@ func (uc *UserController) ViewUser(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		uc.log.Infoln(err)
+		uc.logger.Infoln(err)
 	}
 }
 
@@ -104,7 +104,7 @@ func (uc *UserController) UploadUserAvatar(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		uc.log.Infoln(err)
+		uc.logger.Infoln(err)
 	} else {
 		claims := tokenutil.GetTokenClaimsFromContext(c)
 		res := uc.userService.UploadUserAvatar(claims.UserID, file, fileHeader)
@@ -132,7 +132,7 @@ func (uc *ActivityController) ListUserActivity(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		uc.log.Infoln(err)
+		uc.logger.Infoln(err)
 	}
 }
 
@@ -154,6 +154,6 @@ func (uc *UserController) ChangePasswd(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		uc.log.Infoln(err)
+		uc.logger.Infoln(err)
 	}
 }

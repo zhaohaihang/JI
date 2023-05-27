@@ -61,14 +61,15 @@ func Logger() gin.HandlerFunc {
 			"schema":        schema,
 			"path":          path,
 		})
+
 		if gin.Mode() == "debug" {
 			preEntry.Debug()
-		}else  {
+		} else {
 			preEntry.Info()
 		}
-		
+
 		c.Next()
-		
+
 		cost := time.Since(start).Milliseconds()
 		responseStatus := c.Writer.Status()
 		responseHeader := c.Writer.Header()
@@ -76,13 +77,12 @@ func Logger() gin.HandlerFunc {
 		responseBody := writer.b.String()
 
 		postEntry := log.WithFields(logrus.Fields{
-			"cost":             cost,
+			"cost(ms)":             cost,
 			"responseStatus":   responseStatus,
 			"responseHeader":   responseHeader,
 			"responseBodySize": responseBodySize,
 			"responseBody":     responseBody,
 		})
-		postEntry.Info()
 
 		if responseStatus >= 500 {
 			postEntry.Error()
