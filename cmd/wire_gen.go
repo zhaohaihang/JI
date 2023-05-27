@@ -27,7 +27,7 @@ import (
 
 func CreateApp() (*app.App, error) {
 	configConfig := config.NewConfig()
-	loggerLogger := logger.NewLogger()
+	logrusLogger := logger.NewLogger()
 	databaseDatabase := database.NewDatabase(configConfig)
 	userDao := dao.NewUserDao(databaseDatabase)
 	activityDao := dao.NewActivityDao(databaseDatabase)
@@ -36,10 +36,10 @@ func CreateApp() (*app.App, error) {
 		return nil, err
 	}
 	qiNiuStroage := qiniu.NewQiNiuStroage(configConfig)
-	activityService := service.NewActivityService(userDao, activityDao, pool, qiNiuStroage)
-	userService := service.NewUserService(userDao, activityDao, qiNiuStroage)
-	activityController := v1.NewActivityContrller(loggerLogger, activityService, userService)
-	userController := v1.NewUserContrller(loggerLogger, activityService, userService)
+	activityService := service.NewActivityService(logrusLogger, userDao, activityDao, pool, qiNiuStroage)
+	userService := service.NewUserService(logrusLogger, userDao, activityDao, qiNiuStroage)
+	activityController := v1.NewActivityContrller(logrusLogger, activityService, userService)
+	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
 	engine := routes.NewRouter(activityController, userController)
 	httpServer := http.NewHttpServer(configConfig, engine)
 	tasks := cron.NewTasks(userDao, activityDao)
