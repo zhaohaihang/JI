@@ -22,8 +22,6 @@ type GormLogger struct {
 func NewGormLogger(l *logrus.Logger) *GormLogger {
 	return &GormLogger{
 		logger:                l,
-		SkipErrRecordNotFound: true,
-		Debug:                 true,
 	}
 }
 

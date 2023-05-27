@@ -31,6 +31,9 @@ func NewDatabase(config *config.Config,gl *GormLogger) *Database {
 	pathRead := strings.Join([]string{dbUser, ":", dbPassWord, "@tcp(", dbHost, ":", dbPort, ")/", dbName, "?charset=utf8&parseTime=true"}, "")
 	pathWrite := strings.Join([]string{dbUser, ":", dbPassWord, "@tcp(", dbHost, ":", dbPort, ")/", dbName, "?charset=utf8&parseTime=true"}, "")
 
+	gl.Debug = true
+	gl.SkipErrRecordNotFound = true
+
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       pathRead, // DSN data source name
 		DefaultStringSize:         256,      // string 类型字段的默认长度
