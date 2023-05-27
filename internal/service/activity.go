@@ -19,14 +19,21 @@ import (
 )
 
 type ActivityService struct {
+	log          *logrus.Logger
 	userDao      *dao.UserDao
 	activityDao  *dao.ActivityDao
 	redisPool    *redis.Pool
 	qiniuStroage *qiniu.QiNiuStroage
 }
 
-func NewActivityService(ud *dao.UserDao, ad *dao.ActivityDao, rp *redis.Pool, qs *qiniu.QiNiuStroage) *ActivityService {
+func NewActivityService(
+	log *logrus.Logger,
+	ud *dao.UserDao,
+	ad *dao.ActivityDao,
+	rp *redis.Pool,
+	qs *qiniu.QiNiuStroage) *ActivityService {
 	return &ActivityService{
+		log:          log,
 		userDao:      ud,
 		activityDao:  ad,
 		redisPool:    rp,
@@ -42,14 +49,14 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 
 	user, err := as.userDao.GetUserById(uId)
 	if err != nil {
-		logrus.Info(err)
+		as.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
 			Msg:    e.GetMsg(code),
 		}
 	}
- 
+
 	activity := &model.Activity{
 		Title:          activityInfo.Title,
 		Introduction:   activityInfo.Introduction,
@@ -65,7 +72,7 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 	}
 
 	if err := as.activityDao.CreateActivity(activity); err != nil {
-		logrus.Info(err)
+		as.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -84,7 +91,7 @@ func (as *ActivityService) GetActivityById(aId uint) serializer.Response {
 	code := e.SUCCESS
 	activity, err := as.activityDao.GetActivityById(aId)
 	if err != nil {
-		logrus.Info(err)
+		as.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -102,7 +109,7 @@ func (as *ActivityService) ListActivityByUserId(uId uint, basePage serializer.Ba
 	code := e.SUCCESS
 	activitys, total, err := as.activityDao.ListActivityByUserId(uId, model.BasePage(basePage))
 	if err != nil {
-		logrus.Info(err)
+		as.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -114,10 +121,9 @@ func (as *ActivityService) ListActivityByUserId(uId uint, basePage serializer.Ba
 
 func (as *ActivityService) ListNearActivity(nearInfo serializer.NearInfo) serializer.Response {
 	code := e.SUCCESS
-	// activityDao := dao.NewActivityDao(ctx)
 	activitys, total, err := as.activityDao.ListNearActivity(nearInfo.Lat, nearInfo.Lng, nearInfo.Rad)
 	if err != nil {
-		logrus.Info(err)
+		as.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -148,6 +154,7 @@ func (as *ActivityService) UploadActivityCover(uId uint, file multipart.File, fi
 	path, err := as.qiniuStroage.UploadToQiNiu(filename, file, fileHeader.Size)
 
 	if err != nil {
+		as.log.Info(err)
 		code = e.ErrorUploadFile
 		return serializer.Response{
 			Status: code,

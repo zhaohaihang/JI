@@ -19,13 +19,15 @@ import (
 )
 
 type UserService struct {
+	log          *logrus.Logger
 	userDao      *dao.UserDao
 	activityDao  *dao.ActivityDao
 	qiniuStroage *qiniu.QiNiuStroage
 }
 
-func NewUserService(ud *dao.UserDao, ad *dao.ActivityDao, qs *qiniu.QiNiuStroage) *UserService {
+func NewUserService(log *logrus.Logger, ud *dao.UserDao, ad *dao.ActivityDao, qs *qiniu.QiNiuStroage) *UserService {
 	return &UserService{
+		log:          log,
 		userDao:      ud,
 		activityDao:  ad,
 		qiniuStroage: qs,
@@ -60,7 +62,7 @@ func (us *UserService) Login(loginUserInfo serializer.LoginUserInfo) serializer.
 		}
 		// 加密密码
 		if err := user.SetPassword(loginUserInfo.Password); err != nil {
-			logrus.Info(err)
+			us.log.Info(err)
 			code = e.ErrorUserCreate
 			return serializer.Response{
 				Status: code,
@@ -69,7 +71,7 @@ func (us *UserService) Login(loginUserInfo serializer.LoginUserInfo) serializer.
 		}
 		// 创建用户
 		if err := us.userDao.CreateUser(user); err != nil {
-			logrus.Info(err)
+			us.log.Info(err)
 			code = e.ErrorDatabase
 			return serializer.Response{
 				Status: code,
@@ -82,7 +84,7 @@ func (us *UserService) Login(loginUserInfo serializer.LoginUserInfo) serializer.
 
 	token, err := tokenutil.GenerateToken(user.ID, loginUserInfo.UserName, 0)
 	if err != nil {
-		logrus.Info(err)
+		us.log.Info(err)
 		code = e.ErrorAuthToken
 		return serializer.Response{
 			Status: code,
@@ -107,7 +109,7 @@ func (us *UserService) UpdateUserById(uId uint, updateUserInfo serializer.Update
 	// 找到用户
 	user, err = us.userDao.GetUserById(uId)
 	if err != nil {
-		logrus.Info(err)
+		us.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -127,7 +129,7 @@ func (us *UserService) UpdateUserById(uId uint, updateUserInfo serializer.Update
 
 	err = us.userDao.UpdateUserById(uId, user)
 	if err != nil {
-		logrus.Info(err)
+		us.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -150,7 +152,7 @@ func (us *UserService) GetUserById(uId uint) serializer.Response {
 	// 找到用户
 	user, err = us.userDao.GetUserById(uId)
 	if err != nil {
-		logrus.Info(err)
+		us.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -187,6 +189,7 @@ func (us *UserService) UploadUserAvatar(uId uint, file multipart.File, fileHeade
 	path, err := us.qiniuStroage.UploadToQiNiu(filename, file, fileHeader.Size)
 
 	if err != nil {
+		us.log.Info(err)
 		code = e.ErrorUploadFile
 		return serializer.Response{
 			Status: code,
@@ -208,7 +211,7 @@ func (us *UserService) ChangePasswd(uId uint, changePasswdInfo serializer.Change
 	user, err := us.userDao.GetUserById(uId)
 
 	if err != nil {
-		logrus.Info(err)
+		us.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
@@ -230,7 +233,7 @@ func (us *UserService) ChangePasswd(uId uint, changePasswdInfo serializer.Change
 
 	err = us.userDao.UpdateUserById(uId, user)
 	if err != nil {
-		logrus.Info(err)
+		us.log.Info(err)
 		code = e.ErrorDatabase
 		return serializer.Response{
 			Status: code,
