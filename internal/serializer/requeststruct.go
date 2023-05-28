@@ -27,7 +27,7 @@ type UpdateUserInfo struct {
 type CreateActivityInfo struct {
 	Title          string `form:"title" json:"title" binding:"required,min=2,max=30"`
 	Introduction   string `form:"introduction" json:"introduction" binding:"omitempty,max=1000"`
-	Status         int    `form:"status" json:"status" binding:"required,oneof=1 2 3"`
+	Status         int    `form:"status" json:"status" binding:"required,oneof=0 1 2"`
 	StartTime      int64  `form:"start_time" json:"start_time"  binding:"required,ltfield=EndTime"`
 	EndTime        int64  `form:"end_time" json:"end_time"  binding:"required,gtfield=StartTime"`
 	Location       Point  `form:"location" json:"location" `

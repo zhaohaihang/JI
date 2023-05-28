@@ -18,13 +18,13 @@ func NewCronServer(t *Tasks) *CronServer {
 }
 
 func (cs *CronServer) Start() {
-	addCronFunc(cs.cron, "@every 30m", func() {
-		cs.tasks.PPP()
+	addCronFunc(cs.cron, "@every 1m", func() {
+		cs.tasks.UpdateActivityStatusFromNostartToInprocess()
 	})
 
-	addCronFunc(cs.cron, "0 0 4 ? * *", func() {
-		cs.tasks.PPP2()
-	})
+	// addCronFunc(cs.cron, "@every 2m", func() {
+	// 	cs.tasks.UpdateActivityStatusFromInprocessToEnd()
+	// })
 
 	cs.cron.Start()
 }
