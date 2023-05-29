@@ -22,9 +22,9 @@ func (cs *CronServer) Start() {
 		cs.tasks.UpdateActivityStatusFromNostartToInprocess()
 	})
 
-	// addCronFunc(cs.cron, "@every 2m", func() {
-	// 	cs.tasks.UpdateActivityStatusFromInprocessToEnd()
-	// })
+	addCronFunc(cs.cron, "@every 2m", func() {
+		cs.tasks.UpdateActivityStatusFromInprocessToEnd()
+	})
 
 	cs.cron.Start()
 }

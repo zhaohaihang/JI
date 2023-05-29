@@ -18,6 +18,7 @@ import (
 	"ji/internal/service"
 	"ji/pkg/database"
 	"ji/pkg/logger"
+	"ji/pkg/mail"
 	"ji/pkg/redis"
 	"ji/pkg/storages/localstroage"
 	"ji/pkg/storages/qiniu"
@@ -43,7 +44,11 @@ func CreateApp() (*app.App, error) {
 	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
 	engine := routes.NewRouter(activityController, userController)
 	httpServer := http.NewHttpServer(configConfig, engine)
-	tasks := cron.NewTasks(logrusLogger, userDao, activityDao)
+	emailPool, err := mail.NewRedisPool(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	tasks := cron.NewTasks(logrusLogger, userDao, activityDao, emailPool)
 	cronServer := cron.NewCronServer(tasks)
 	appApp := app.NewApp(configConfig, engine, httpServer, cronServer)
 	return appApp, nil
@@ -51,4 +56,4 @@ func CreateApp() (*app.App, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(app.AppProviderSet, http.HttpServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ControllerProviderSet, service.ServiceProviderSet, database.DatabaseProviderSet, dao.DaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet, cron.CronServerProviderSet)
+var providerSet = wire.NewSet(app.AppProviderSet, http.HttpServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ControllerProviderSet, service.ServiceProviderSet, database.DatabaseProviderSet, dao.DaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet, cron.CronServerProviderSet, mail.MailPoolProviderSet)
