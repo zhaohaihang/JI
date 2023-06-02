@@ -8,13 +8,17 @@ import (
 	"github.com/jordan-wright/email"
 )
 
+const (
+	POOL_SIZE = 4
+)
+
 var MailPool *email.Pool
 
 func NewRedisPool(cfg *config.Config) (*email.Pool, error) {
 
-	auth := smtp.PlainAuth("", "1932859223@qq.com", "mddebbjnnqipbdjg", "smtp.qq.com")
+	auth := smtp.PlainAuth("", cfg.Mail.MailUsername, cfg.Mail.MailPasswd, cfg.Mail.MailHost)
 
-	pool, err := email.NewPool("smtp.qq.com:25", 4, auth)
+	pool, err := email.NewPool(cfg.Mail.MailAddress, POOL_SIZE, auth)
 	if err != nil {
 		return nil, err
 	}

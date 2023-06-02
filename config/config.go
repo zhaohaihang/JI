@@ -41,12 +41,20 @@ type QiNiuConf struct {
 	Domain    string `flag:"domain" toml:"domain" json:"domain"`
 }
 
+type MailConf struct {
+	MailUsername string `flag:"mail_username" toml:"mail_username" json:"username"`
+	MailPasswd   string `flag:"mail_passwd" toml:"mail_passwd" json:"mail_passwd"`
+	MailHost     string `flag:"mail_host" toml:"mail_host" json:"mail_host"`
+	MailAddress  string `flag:"mail_address" toml:"mail_address" json:"mail_address"`
+}
+
 type Config struct {
 	Server ServerConf `flag:"server" toml:"server" json:"server"`
 	Mysql  MysqlConf  `flag:"mysql" toml:"mysql" json:"mysql"`
 	Redis  RedisConf  `flag:"redis" toml:"redis" json:"redis"`
 	Static StaticConf `flag:"static" toml:"static" json:"static"`
 	QiNiu  QiNiuConf  `flag:"qiniu" toml:"qiniu" json:"qiniu"`
+	Mail   MailConf   `flag:"mail" toml:"mail" json:"mail"`
 }
 
 func NewConfig() *Config {
