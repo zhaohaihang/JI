@@ -22,7 +22,7 @@ services:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: ji_db
     volumes:
-      - /var/lib/mysql:/var/lib/mysql
+      - /var/lib/mysql/ji_mysql:/var/lib/mysql
     ports:
       - 3306:3306
   
