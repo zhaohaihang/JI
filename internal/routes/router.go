@@ -3,11 +3,11 @@ package routes
 import (
 	"net/http"
 
-	v1 "ji/internal/api/v1"
+	v1 "ji/internal/api/v1"                  
 
 	"ji/pkg/middleware"
 
-	"ji/pkg/valid"
+	"ji/internal/valid"
 
 	_ "ji/docs"
 
