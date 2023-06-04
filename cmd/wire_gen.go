@@ -39,21 +39,21 @@ func CreateApp() (*app.App, error) {
 		return nil, err
 	}
 	qiNiuStroage := qiniu.NewQiNiuStroage(configConfig)
-	client, err := es.NewEsClient(configConfig)
-	if err != nil {
-		return nil, err
-	}
-	activityService := service.NewActivityService(logrusLogger, userDao, activityDao, pool, qiNiuStroage, client)
+	activityService := service.NewActivityService(logrusLogger, userDao, activityDao, pool, qiNiuStroage)
 	userService := service.NewUserService(logrusLogger, userDao, activityDao, qiNiuStroage)
 	activityController := v1.NewActivityContrller(logrusLogger, activityService, userService)
 	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
 	engine := routes.NewRouter(activityController, userController)
 	httpServer := http.NewHttpServer(configConfig, engine)
-	emailPool, err := mail.NewRedisPool(configConfig)
+	mailClient, err := mail.NewMailClient(configConfig)
 	if err != nil {
 		return nil, err
 	}
-	tasks := cron.NewTasks(logrusLogger, userDao, activityDao, emailPool, client)
+	esClient, err := es.NewEsClient(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	tasks := cron.NewTasks(logrusLogger, userDao, activityDao, mailClient, esClient)
 	cronServer := cron.NewCronServer(tasks)
 	appApp := app.NewApp(configConfig, engine, httpServer, cronServer)
 	return appApp, nil

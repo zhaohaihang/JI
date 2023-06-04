@@ -7,16 +7,19 @@ import (
 	"github.com/olivere/elastic/v7"
 )
 
-var EsClient *elastic.Client
+type EsClient struct {
+	client *elastic.Client
+}
 
-func NewEsClient(config *config.Config) (*elastic.Client, error) {
+func NewEsClient(config *config.Config) (*EsClient, error) {
+	var esClient *EsClient
 	esConn := "http://" + config.Es.EsHost + ":" + config.Es.Esport
-	esClient, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(esConn))
+	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(esConn))
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	EsClient = esClient
-	return esClient,nil
+	esClient.client = client
+	return esClient, nil
 }
 
 var EsClientProviderSet = wire.NewSet(NewEsClient)
