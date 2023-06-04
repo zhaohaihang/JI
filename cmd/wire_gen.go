@@ -17,6 +17,7 @@ import (
 	"ji/internal/routes"
 	"ji/internal/service"
 	"ji/pkg/database"
+	"ji/pkg/es"
 	"ji/pkg/logger"
 	"ji/pkg/mail"
 	"ji/pkg/redis"
@@ -38,7 +39,11 @@ func CreateApp() (*app.App, error) {
 		return nil, err
 	}
 	qiNiuStroage := qiniu.NewQiNiuStroage(configConfig)
-	activityService := service.NewActivityService(logrusLogger, userDao, activityDao, pool, qiNiuStroage)
+	client, err := es.NewEsClient(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	activityService := service.NewActivityService(logrusLogger, userDao, activityDao, pool, qiNiuStroage, client)
 	userService := service.NewUserService(logrusLogger, userDao, activityDao, qiNiuStroage)
 	activityController := v1.NewActivityContrller(logrusLogger, activityService, userService)
 	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
@@ -48,7 +53,7 @@ func CreateApp() (*app.App, error) {
 	if err != nil {
 		return nil, err
 	}
-	tasks := cron.NewTasks(logrusLogger, userDao, activityDao, emailPool)
+	tasks := cron.NewTasks(logrusLogger, userDao, activityDao, emailPool, client)
 	cronServer := cron.NewCronServer(tasks)
 	appApp := app.NewApp(configConfig, engine, httpServer, cronServer)
 	return appApp, nil
@@ -56,4 +61,4 @@ func CreateApp() (*app.App, error) {
 
 // wire.go:
 
-var providerSet = wire.NewSet(app.AppProviderSet, http.HttpServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ControllerProviderSet, service.ServiceProviderSet, database.DatabaseProviderSet, dao.DaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet, cron.CronServerProviderSet, mail.MailPoolProviderSet)
+var providerSet = wire.NewSet(app.AppProviderSet, http.HttpServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ControllerProviderSet, service.ServiceProviderSet, database.DatabaseProviderSet, dao.DaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet, cron.CronServerProviderSet, mail.MailPoolProviderSet, es.EsClientProviderSet)

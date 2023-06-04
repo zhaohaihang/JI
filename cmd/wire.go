@@ -12,6 +12,7 @@ import (
 	"ji/internal/routes"
 	"ji/internal/service"
 	"ji/pkg/database"
+	"ji/pkg/es"
 	"ji/pkg/mail"
 	"ji/pkg/logger"
 	"ji/pkg/redis"
@@ -36,6 +37,7 @@ var providerSet = wire.NewSet(
 	qiniu.QiNiuStroageProviderSet,
 	cron.CronServerProviderSet,
 	mail.MailPoolProviderSet,
+	es.EsClientProviderSet,
 )
 
 func CreateApp() (*app.App, error) {
