@@ -6,6 +6,7 @@ import (
 	"net/textproto"
 
 	"github.com/jordan-wright/email"
+	"github.com/olivere/elastic/v7"
 	"github.com/sirupsen/logrus"
 )
 
@@ -14,14 +15,16 @@ type Tasks struct {
 	userDao     *dao.UserDao
 	activityDao *dao.ActivityDao
 	mailPool    *email.Pool
+	esClient    *elastic.Client
 }
 
-func NewTasks(l *logrus.Logger, ud *dao.UserDao, ad *dao.ActivityDao, mp *email.Pool) *Tasks {
+func NewTasks(l *logrus.Logger, ud *dao.UserDao, ad *dao.ActivityDao, mp *email.Pool, ec *elastic.Client) *Tasks {
 	return &Tasks{
 		logger:      l,
 		userDao:     ud,
 		activityDao: ad,
 		mailPool:    mp,
+		esClient:    ec,
 	}
 }
 

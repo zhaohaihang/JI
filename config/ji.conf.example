@@ -33,3 +33,7 @@ mail_username = "1932859223@qq.com"
 mail_passwd = "***"
 mail_host = "mtp.qq.com"
 mail_address = "smtp.qq.com:25"
+
+[es]
+es_host = 127.0.0.1
+es_port = 9200

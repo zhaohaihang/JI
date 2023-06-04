@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/gomodule/redigo/redis"
+	"github.com/olivere/elastic/v7"
 
 	"github.com/google/wire"
 	"github.com/sirupsen/logrus"
@@ -24,6 +25,7 @@ type ActivityService struct {
 	activityDao  *dao.ActivityDao
 	redisPool    *redis.Pool
 	qiniuStroage *qiniu.QiNiuStroage
+	esClient     *elastic.Client
 }
 
 func NewActivityService(
@@ -31,13 +33,15 @@ func NewActivityService(
 	ud *dao.UserDao,
 	ad *dao.ActivityDao,
 	rp *redis.Pool,
-	qs *qiniu.QiNiuStroage) *ActivityService {
+	qs *qiniu.QiNiuStroage,
+	ec *elastic.Client) *ActivityService {
 	return &ActivityService{
 		logger:       l,
 		userDao:      ud,
 		activityDao:  ad,
 		redisPool:    rp,
 		qiniuStroage: qs,
+		esClient:     ec,
 	}
 }
 

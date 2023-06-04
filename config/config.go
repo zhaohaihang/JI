@@ -42,10 +42,15 @@ type QiNiuConf struct {
 }
 
 type MailConf struct {
-	MailUsername string `flag:"mail_username" toml:"mail_username" json:"username"`
+	MailUsername string `flag:"mail_username" toml:"mail_username" json:"mail_username"`
 	MailPasswd   string `flag:"mail_passwd" toml:"mail_passwd" json:"mail_passwd"`
 	MailHost     string `flag:"mail_host" toml:"mail_host" json:"mail_host"`
 	MailAddress  string `flag:"mail_address" toml:"mail_address" json:"mail_address"`
+}
+
+type EsConf struct {
+	EsHost string `flag:"es_host" toml:"es_host" json:"es_host"`
+	Esport string `flag:"es_port" toml:"es_port" json:"es_port"`
 }
 
 type Config struct {
@@ -55,6 +60,7 @@ type Config struct {
 	Static StaticConf `flag:"static" toml:"static" json:"static"`
 	QiNiu  QiNiuConf  `flag:"qiniu" toml:"qiniu" json:"qiniu"`
 	Mail   MailConf   `flag:"mail" toml:"mail" json:"mail"`
+	Es     EsConf     `flag:"es" toml:"es" json:"es"`
 }
 
 func NewConfig() *Config {
