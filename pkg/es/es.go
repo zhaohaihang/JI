@@ -12,14 +12,14 @@ type EsClient struct {
 }
 
 func NewEsClient(config *config.Config) (*EsClient, error) {
-	var esClient *EsClient
+	var esClient EsClient
 	esConn := "http://" + config.Es.EsHost + ":" + config.Es.Esport
 	client, err := elastic.NewClient(elastic.SetSniff(false), elastic.SetURL(esConn))
 	if err != nil {
 		return nil, err
 	}
 	esClient.client = client
-	return esClient, nil
+	return &esClient, nil
 }
 
 var EsClientProviderSet = wire.NewSet(NewEsClient)

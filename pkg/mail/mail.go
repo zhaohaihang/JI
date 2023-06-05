@@ -20,7 +20,7 @@ type MailClient struct {
 
 func NewMailClient(cfg *config.Config) (*MailClient, error) {
 
-	var mailClient *MailClient
+	var mailClient MailClient
 
 	auth := smtp.PlainAuth("", cfg.Mail.MailUsername, cfg.Mail.MailPasswd, cfg.Mail.MailHost)
 
@@ -29,7 +29,7 @@ func NewMailClient(cfg *config.Config) (*MailClient, error) {
 		return nil, err
 	}
 	mailClient.mailPool = pool
-	return mailClient, nil
+	return &mailClient, nil
 }
 
 var MailPoolProviderSet = wire.NewSet(NewMailClient)
