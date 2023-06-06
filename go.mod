@@ -57,6 +57,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/qiniu/go-sdk/v7 v7.15.0
 	github.com/robfig/cron v1.2.0
+	github.com/streadway/amqp v1.0.0
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.9 // indirect
 	golang.org/x/arch v0.0.0-20210923205945-b76863e36670 // indirect

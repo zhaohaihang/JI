@@ -53,14 +53,22 @@ type EsConf struct {
 	Esport string `flag:"es_port" toml:"es_port" json:"es_port"`
 }
 
+type RabbitMQConf struct {
+	Host     string `flag:"host" toml:"host" json:"host"`
+	Port     string `flag:"port" toml:"port" json:"port"`
+	Username string `flag:"username" toml:"username" json:"username"`
+	Password string `flag:"password" toml:"password" json:"password"`
+}
+
 type Config struct {
-	Server ServerConf `flag:"server" toml:"server" json:"server"`
-	Mysql  MysqlConf  `flag:"mysql" toml:"mysql" json:"mysql"`
-	Redis  RedisConf  `flag:"redis" toml:"redis" json:"redis"`
-	Static StaticConf `flag:"static" toml:"static" json:"static"`
-	QiNiu  QiNiuConf  `flag:"qiniu" toml:"qiniu" json:"qiniu"`
-	Mail   MailConf   `flag:"mail" toml:"mail" json:"mail"`
-	Es     EsConf     `flag:"es" toml:"es" json:"es"`
+	Server   ServerConf   `flag:"server" toml:"server" json:"server"`
+	Mysql    MysqlConf    `flag:"mysql" toml:"mysql" json:"mysql"`
+	Redis    RedisConf    `flag:"redis" toml:"redis" json:"redis"`
+	Static   StaticConf   `flag:"static" toml:"static" json:"static"`
+	QiNiu    QiNiuConf    `flag:"qiniu" toml:"qiniu" json:"qiniu"`
+	Mail     MailConf     `flag:"mail" toml:"mail" json:"mail"`
+	Es       EsConf       `flag:"es" toml:"es" json:"es"`
+	RabbitMQ RabbitMQConf `flag:"rabbitmq" toml:"rabbitmq" json:"rabbitmq"`
 }
 
 func NewConfig() *Config {
