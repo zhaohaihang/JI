@@ -84,14 +84,18 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 			Msg:    e.GetMsg(code),
 		}
 	}
+	
+	serializeActivity := serializer.BuildActivity(activity)
+
 	// TODO send to mq
-	a := serializer.BuildActivity(activity)
-	b,_:=json.Marshal(a)
-	as.mq.SendMessageDirect(b,"activityExChange", "activityCreateQueue")
+	message,_:=json.Marshal(serializeActivity)
+	if err := as.mq.SendMessageDirect(message,"activityExChange", "activityCreateQueue");err != nil {
+		as.logger.Info(err)
+	}
 
 	return serializer.Response{
 		Status: code,
-		Data:   serializer.BuildActivity(activity),
+		Data:   serializeActivity,
 		Msg:    e.GetMsg(code),
 	}
 }
