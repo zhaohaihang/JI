@@ -36,7 +36,7 @@ func NewRabbitMQClient(config *config.Config) (*RabbitMQClient, error) {
 
 var RabbitMQClientProviderSet = wire.NewSet(NewRabbitMQClient)
 
-func (rc *RabbitMQClient) SendMessageDirect(message string, exchangeName string, queueName string) error {
+func (rc *RabbitMQClient) SendMessageDirect(message []byte, exchangeName string, queueName string) error {
 	routekey := queueName
 	if err := rc.channel.ExchangeDeclare(exchangeName, EXCHANGE_TYPE, true, false, false, false, nil); err != nil {
 		return err
@@ -53,7 +53,7 @@ func (rc *RabbitMQClient) SendMessageDirect(message string, exchangeName string,
 		amqp.Publishing{
 			DeliveryMode: 2,
 			ContentType:  "application/json",
-			Body:         []byte(message),
+			Body:         message,
 			Timestamp:    time.Now(),
 		},
 	)
@@ -97,4 +97,9 @@ func (rc *RabbitMQClient) ConsumerDirect(exchangeName string, queueName string, 
 		}
 	}()
 	return nil
+}
+
+func (rc *RabbitMQClient) Close() {
+	rc.channel.Close()
+	rc.connection.Close()
 }

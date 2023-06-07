@@ -1,6 +1,7 @@
 package es
 
 import (
+	"context"
 	"ji/config"
 
 	"github.com/google/wire"
@@ -23,3 +24,56 @@ func NewEsClient(config *config.Config) (*EsClient, error) {
 }
 
 var EsClientProviderSet = wire.NewSet(NewEsClient)
+
+func (cli *EsClient) Create(Params map[string]string) (string, error) {
+	var (
+		res *elastic.IndexResponse
+		err error
+	)
+	 
+	cli.client.Index()
+	res, err = cli.client.Index().
+		Index(Params["index"]).
+		Id(Params["id"]).BodyJson(Params["bodyJson"]).
+		Do(context.Background())
+
+	if err != nil {
+		return "", err
+	}
+	return res.Result, nil
+}
+
+func (cli *EsClient) Update(Params map[string]string, Doc map[string]string) string {
+	var (
+		res *elastic.UpdateResponse
+		err error
+	)
+	res, err = cli.client.Update().
+		Index(Params["index"]).
+		Id(Params["id"]).
+		Doc(Doc).
+		Do(context.Background())
+
+	if err != nil {
+		return ""
+	}
+	return res.Result
+}
+
+func (cli *EsClient) Delete(Params map[string]string) (string, error) {
+	var (
+		res *elastic.DeleteResponse
+		err error
+	)
+
+	res, err = cli.client.Delete().
+		Index(Params["index"]).
+		Id(Params["id"]).
+		Do(context.Background())
+
+	if err != nil {
+		return "", err
+	}
+
+	return res.Result, nil
+}

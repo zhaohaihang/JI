@@ -9,8 +9,8 @@ type Activity struct {
 	Title          string `json:"title"`
 	Introduction   string `json:"introduction"`
 	Status         int    `json:"status"`
-	StartTime      int64
-	EndTime        int64
+	StartTime      int64  `json:"start_time"`
+	EndTime        int64  `json:"end_time"`
 	Location       Point  `json:"location"`
 	ExpectedNumber uint   `json:"expected_number"`
 	CurrentNumber  uint   `json:"current_Number"`

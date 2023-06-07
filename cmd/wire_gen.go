@@ -11,6 +11,7 @@ import (
 	"ji/app"
 	"ji/config"
 	"ji/internal/api/v1"
+	"ji/internal/backproc"
 	"ji/internal/cron"
 	"ji/internal/dao"
 	"ji/internal/http"
@@ -20,6 +21,7 @@ import (
 	"ji/pkg/es"
 	"ji/pkg/logger"
 	"ji/pkg/mail"
+	"ji/pkg/mq"
 	"ji/pkg/redis"
 	"ji/pkg/storages/localstroage"
 	"ji/pkg/storages/qiniu"
@@ -39,7 +41,11 @@ func CreateApp() (*app.App, error) {
 		return nil, err
 	}
 	qiNiuStroage := qiniu.NewQiNiuStroage(configConfig)
-	activityService := service.NewActivityService(logrusLogger, userDao, activityDao, pool, qiNiuStroage)
+	rabbitMQClient, err := mq.NewRabbitMQClient(configConfig)
+	if err != nil {
+		return nil, err
+	}
+	activityService := service.NewActivityService(logrusLogger, userDao, activityDao, pool, qiNiuStroage, rabbitMQClient)
 	userService := service.NewUserService(logrusLogger, userDao, activityDao, qiNiuStroage)
 	activityController := v1.NewActivityContrller(logrusLogger, activityService, userService)
 	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
@@ -55,10 +61,12 @@ func CreateApp() (*app.App, error) {
 	}
 	tasks := cron.NewTasks(logrusLogger, userDao, activityDao, mailClient, esClient)
 	cronServer := cron.NewCronServer(tasks)
-	appApp := app.NewApp(configConfig, engine, httpServer, cronServer)
+	esSyncProc := backproc.NewEsSyncProc(esClient, rabbitMQClient)
+	backProcServer := backproc.NewBackProcServer(esSyncProc)
+	appApp := app.NewApp(configConfig, engine, httpServer, cronServer, backProcServer)
 	return appApp, nil
 }
 
 // wire.go:
 
-var providerSet = wire.NewSet(app.AppProviderSet, http.HttpServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ControllerProviderSet, service.ServiceProviderSet, database.DatabaseProviderSet, dao.DaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet, cron.CronServerProviderSet, mail.MailPoolProviderSet, es.EsClientProviderSet)
+var providerSet = wire.NewSet(app.AppProviderSet, http.HttpServerProviderSet, config.ConfigProviderSet, routes.RouterProviderSet, v1.ControllerProviderSet, service.ServiceProviderSet, database.DatabaseProviderSet, dao.DaoProviderSet, logger.LoggerProviderSet, localstroage.LocalStroageProviderSet, redis.RedisPoolProviderSet, qiniu.QiNiuStroageProviderSet, cron.CronServerProviderSet, backproc.BackProcServerProviderSet, mail.MailPoolProviderSet, es.EsClientProviderSet, mq.RabbitMQClientProviderSet)

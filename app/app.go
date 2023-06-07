@@ -2,6 +2,7 @@ package app
 
 import (
 	"ji/config"
+	"ji/internal/backproc"
 	"ji/internal/cron"
 	"ji/internal/http"
 	"os"
@@ -15,18 +16,24 @@ import (
 )
 
 type App struct {
-	config     *config.Config
-	router     *gin.Engine
-	httpServer *http.HttpServer
-	cronServer *cron.CronServer
+	config         *config.Config
+	router         *gin.Engine
+	httpServer     *http.HttpServer
+	cronServer     *cron.CronServer
+	backProcServer *backproc.BackProcServer
 }
 
-func NewApp(c *config.Config, r *gin.Engine, hs *http.HttpServer, cs *cron.CronServer) *App {
+func NewApp(c *config.Config,
+	r *gin.Engine,
+	hs *http.HttpServer,
+	cs *cron.CronServer,
+	bps *backproc.BackProcServer) *App {
 	return &App{
-		config:     c,
-		router:     r,
-		httpServer: hs,
-		cronServer: cs,
+		config:         c,
+		router:         r,
+		httpServer:     hs,
+		cronServer:     cs,
+		backProcServer: bps,
 	}
 }
 
@@ -41,6 +48,10 @@ func (a *App) Start() error {
 
 	if a.cronServer != nil {
 		a.cronServer.Start()
+	}
+
+	if a.backProcServer != nil {
+		a.backProcServer.Start()
 	}
 
 	return nil
@@ -61,6 +72,10 @@ func (a *App) AwaitSignal() {
 
 	if a.cronServer != nil {
 		a.cronServer.Stop()
+	}
+	
+	if a.cronServer != nil {
+		a.backProcServer.Stop()
 	}
 	os.Exit(0)
 }

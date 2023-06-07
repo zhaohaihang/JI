@@ -7,12 +7,14 @@ import (
 	"ji/config"
 	v1 "ji/internal/api/v1"
 	"ji/internal/cron"
+	"ji/internal/backproc"
 	"ji/internal/dao"
 	"ji/internal/http"
 	"ji/internal/routes"
 	"ji/internal/service"
 	"ji/pkg/database"
 	"ji/pkg/es"
+	"ji/pkg/mq"
 	"ji/pkg/mail"
 	"ji/pkg/logger"
 	"ji/pkg/redis"
@@ -36,8 +38,10 @@ var providerSet = wire.NewSet(
 	redis.RedisPoolProviderSet,
 	qiniu.QiNiuStroageProviderSet,
 	cron.CronServerProviderSet,
+	backproc.BackProcServerProviderSet,
 	mail.MailPoolProviderSet,
 	es.EsClientProviderSet,
+	mq.RabbitMQClientProviderSet,
 )
 
 func CreateApp() (*app.App, error) {

@@ -1,11 +1,13 @@
 package service
 
 import (
+	"encoding/json"
 	"ji/internal/dao"
 	"ji/internal/model"
 	"ji/internal/serializer"
 	"ji/pkg/consts"
 	"ji/pkg/e"
+	"ji/pkg/mq"
 	"ji/pkg/storages/qiniu"
 	"mime/multipart"
 	"strconv"
@@ -24,6 +26,7 @@ type ActivityService struct {
 	activityDao  *dao.ActivityDao
 	redisPool    *redis.Pool
 	qiniuStroage *qiniu.QiNiuStroage
+	mq           *mq.RabbitMQClient
 }
 
 func NewActivityService(
@@ -31,13 +34,15 @@ func NewActivityService(
 	ud *dao.UserDao,
 	ad *dao.ActivityDao,
 	rp *redis.Pool,
-	qs *qiniu.QiNiuStroage) *ActivityService {
+	qs *qiniu.QiNiuStroage,
+	mq *mq.RabbitMQClient) *ActivityService {
 	return &ActivityService{
 		logger:       l,
 		userDao:      ud,
 		activityDao:  ad,
 		redisPool:    rp,
 		qiniuStroage: qs,
+		mq:           mq,
 	}
 }
 
@@ -79,6 +84,10 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 			Msg:    e.GetMsg(code),
 		}
 	}
+	// TODO send to mq
+	a := serializer.BuildActivity(activity)
+	b,_:=json.Marshal(a)
+	as.mq.SendMessageDirect(b,"activityExChange", "activityCreateQueue")
 
 	return serializer.Response{
 		Status: code,
