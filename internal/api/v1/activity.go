@@ -50,7 +50,7 @@ func (ac *ActivityController) CreateActivity(c *gin.Context) {
 
 // ShowActivity godoc
 // @Summary 查看活动详情
-// @Description  查看用户详情接口
+// @Description  查看活动详情接口
 // @Tags activity
 // @Accept  json
 // @Produce  json
@@ -108,5 +108,25 @@ func (ac *ActivityController) UploadActivityCover(c *gin.Context) {
 		claims := tokenutil.GetTokenClaimsFromContext(c)
 		res := ac.activityService.UploadActivityCover(claims.UserID, file, fileHeader)
 		c.JSON(http.StatusOK, res)
+	}
+}
+
+// DeleteActivity godoc
+// @Summary 删除活动
+// @Description  删除活动
+// @Tags activity
+// @Accept  json
+// @Produce  json
+// @Param aid path int true "activity ID"
+// @Success 200 {object} serializer.Response{}
+// @Router /api/v1/activity/{aid} [delete]
+func (ac *ActivityController) DeleteActivity(c *gin.Context){
+	aIdStr := c.Param("aid")
+	if aId, err := strconv.ParseUint(aIdStr, 10, 32); err == nil {
+		res := ac.activityService.DeleteActivityById(uint(aId))
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		ac.logger.Infoln(err)
 	}
 }

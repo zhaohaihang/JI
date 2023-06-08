@@ -192,7 +192,7 @@ const docTemplate = `{
         },
         "/api/v1/activity/{aid}": {
             "get": {
-                "description": "查看用户详情接口",
+                "description": "查看活动详情接口",
                 "consumes": [
                     "application/json"
                 ],
@@ -229,6 +229,36 @@ const docTemplate = `{
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除活动",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "删除活动",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "activity ID",
+                        "name": "aid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serializer.Response"
                         }
                     }
                 }
@@ -571,7 +601,7 @@ const docTemplate = `{
                 "current_Number": {
                     "type": "integer"
                 },
-                "endTime": {
+                "end_time": {
                     "type": "integer"
                 },
                 "expected_number": {
@@ -586,7 +616,7 @@ const docTemplate = `{
                 "location": {
                     "$ref": "#/definitions/serializer.Point"
                 },
-                "startTime": {
+                "start_time": {
                     "type": "integer"
                 },
                 "status": {
@@ -635,18 +665,22 @@ const docTemplate = `{
             "type": "object",
             "required": [
                 "end_time",
+                "expected_number",
                 "start_time",
-                "status"
+                "status",
+                "title"
             ],
             "properties": {
                 "cover": {
-                    "type": "string"
+                    "type": "string",
+                    "maxLength": 1000
                 },
                 "end_time": {
                     "type": "integer"
                 },
                 "expected_number": {
-                    "type": "integer"
+                    "type": "integer",
+                    "maximum": 1000
                 },
                 "introduction": {
                     "type": "string",
@@ -661,14 +695,15 @@ const docTemplate = `{
                 "status": {
                     "type": "integer",
                     "enum": [
+                        0,
                         1,
-                        2,
-                        3
+                        2
                     ]
                 },
                 "title": {
                     "type": "string",
-                    "maxLength": 30
+                    "maxLength": 30,
+                    "minLength": 2
                 }
             }
         },

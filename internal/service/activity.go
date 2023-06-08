@@ -84,12 +84,12 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 			Msg:    e.GetMsg(code),
 		}
 	}
-	
+
 	serializeActivity := serializer.BuildActivity(activity)
 
 	// TODO send to mq
-	message,_:=json.Marshal(serializeActivity)
-	if err := as.mq.SendMessageDirect(message,"activityExChange", "activityCreateQueue");err != nil {
+	message, _ := json.Marshal(serializeActivity)
+	if err := as.mq.SendMessageDirect(message, "activityExChange", "activityCreateQueue"); err != nil {
 		as.logger.Info(err)
 	}
 
@@ -179,6 +179,25 @@ func (as *ActivityService) UploadActivityCover(uId uint, file multipart.File, fi
 	return serializer.Response{
 		Status: code,
 		Data:   path,
+		Msg:    e.GetMsg(code),
+	}
+}
+
+func (as *ActivityService) DeleteActivityById(aId uint) serializer.Response {
+	code := e.SUCCESS
+
+	err := as.activityDao.DeleteActivityById(aId)
+	if err != nil {
+		as.logger.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
 		Msg:    e.GetMsg(code),
 	}
 }
