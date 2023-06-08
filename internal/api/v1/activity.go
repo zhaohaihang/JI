@@ -48,6 +48,34 @@ func (ac *ActivityController) CreateActivity(c *gin.Context) {
 	}
 }
 
+// UpdateActivity godoc
+// @Summary 更新活动
+// @Description  更新活动接口
+// @Tags activity
+// @Accept  json
+// @Produce  json
+// @Param Authorization header string true "Authorization header parameter"
+// @Param aid path int true "activity ID"
+// @Param UpdateActivityInfo body serializer.UpdateActivityInfo true "activity update info"
+// @Success 200 {object} serializer.Response{data=serializer.Activity}
+// @Router /api/v1/activity/{aid} [put]
+func (ac *ActivityController) UpdateActivity(c *gin.Context) {
+	aIdStr := c.Param("aid")
+	aId, err := strconv.ParseUint(aIdStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		ac.logger.Infoln(err)
+	}
+	var updateActivityInfo serializer.UpdateActivityInfo
+	if err := c.ShouldBind(&updateActivityInfo); err == nil {
+		res := ac.activityService.UpdateActivity(uint(aId), updateActivityInfo)
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		ac.logger.Infoln(err)
+	}
+}
+
 // ShowActivity godoc
 // @Summary 查看活动详情
 // @Description  查看活动详情接口
@@ -120,7 +148,7 @@ func (ac *ActivityController) UploadActivityCover(c *gin.Context) {
 // @Param aid path int true "activity ID"
 // @Success 200 {object} serializer.Response{}
 // @Router /api/v1/activity/{aid} [delete]
-func (ac *ActivityController) DeleteActivity(c *gin.Context){
+func (ac *ActivityController) DeleteActivity(c *gin.Context) {
 	aIdStr := c.Param("aid")
 	if aId, err := strconv.ParseUint(aIdStr, 10, 32); err == nil {
 		res := ac.activityService.DeleteActivityById(uint(aId))

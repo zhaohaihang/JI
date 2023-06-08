@@ -47,6 +47,10 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
 
 			authed.POST("activity", ac.CreateActivity)
 			authed.PUT("activity/cover", ac.UploadActivityCover)
+			
+			authed.PUT("activity/:aid", ac.UpdateActivity)
+			authed.DELETE("activity/cover", ac.DeleteActivity)
+
 		}
 	}
 	return r

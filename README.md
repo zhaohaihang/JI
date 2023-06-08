@@ -40,3 +40,4 @@ https://blog.csdn.net/joychenwenyu/article/details/126935706
 cd ji #进入项目根路径
 swag init -g cmd/main.go -o docs  #初始化文档
 ```
+docker restart ji_redis ji_mysql ji_kibana ji_es ji_rabbitmq

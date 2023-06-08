@@ -37,7 +37,6 @@ func BuildActivity(activity *model.Activity) *Activity {
 		UserName:       activity.UserName,
 		UserAvatar:     activity.UserAvatar,
 	}
-
 	return a
 }
 

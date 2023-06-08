@@ -2,6 +2,7 @@ package es
 
 import (
 	"context"
+	"fmt"
 	"ji/config"
 
 	"github.com/google/wire"
@@ -34,7 +35,8 @@ func (cli *EsClient) Create(Params map[string]string) (string, error) {
 	cli.client.Index()
 	res, err = cli.client.Index().
 		Index(Params["index"]).
-		Id(Params["id"]).BodyJson(Params["bodyJson"]).
+		Id(Params["id"]).
+		BodyJson(Params["bodyJson"]).
 		Do(context.Background())
 
 	if err != nil {
@@ -43,7 +45,7 @@ func (cli *EsClient) Create(Params map[string]string) (string, error) {
 	return res.Result, nil
 }
 
-func (cli *EsClient) Update(Params map[string]string, Doc map[string]string) string {
+func (cli *EsClient) Update(Params map[string]string, Doc map[string]interface{}) string {
 	var (
 		res *elastic.UpdateResponse
 		err error
@@ -55,6 +57,7 @@ func (cli *EsClient) Update(Params map[string]string, Doc map[string]string) str
 		Do(context.Background())
 
 	if err != nil {
+		fmt.Println(err)
 		return ""
 	}
 	return res.Result

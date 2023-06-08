@@ -100,6 +100,42 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 	}
 }
 
+func (as *ActivityService) UpdateActivity(aId uint, activityInfo serializer.UpdateActivityInfo) serializer.Response {
+
+	code := e.SUCCESS
+
+	activity := &model.Activity{
+		Title:          activityInfo.Title,
+		Introduction:   activityInfo.Introduction,
+		StartTime:      activityInfo.StartTime,
+		EndTime:        activityInfo.EndTime,
+		Location:       model.Point(activityInfo.Location),
+		ExpectedNumber: activityInfo.ExpectedNumber,
+	}
+
+	if err := as.activityDao.UpdateActivityById(aId, activity); err != nil {
+		as.logger.Info(err)
+		code = e.ErrorDatabase
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+
+	activity.ID = aId
+	serializeActivity := serializer.BuildActivity(activity)
+	message, _ := json.Marshal(serializeActivity)
+	if err := as.mq.SendMessageDirect(message, "activityExChange", "activityUpdateQueue"); err != nil {
+		as.logger.Info(err)
+	}
+
+	return serializer.Response{
+		Status: code,
+		Data:   serializeActivity,
+		Msg:    e.GetMsg(code),
+	}
+}
+
 func (as *ActivityService) GetActivityById(aId uint) serializer.Response {
 	code := e.SUCCESS
 	activity, err := as.activityDao.GetActivityById(aId)
@@ -195,7 +231,7 @@ func (as *ActivityService) DeleteActivityById(aId uint) serializer.Response {
 			Msg:    e.GetMsg(code),
 		}
 	}
-	
+
 	mqdata := serializer.Activity{
 		ID: aId,
 	}

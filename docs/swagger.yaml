@@ -72,12 +72,6 @@ definitions:
         $ref: '#/definitions/serializer.Point'
       start_time:
         type: integer
-      status:
-        enum:
-        - 0
-        - 1
-        - 2
-        type: integer
       title:
         maxLength: 30
         minLength: 2
@@ -86,7 +80,6 @@ definitions:
     - end_time
     - expected_number
     - start_time
-    - status
     - title
     type: object
   serializer.DataList:
@@ -135,6 +128,33 @@ definitions:
       token:
         type: string
       user: {}
+    type: object
+  serializer.UpdateActivityInfo:
+    properties:
+      cover:
+        maxLength: 1000
+        type: string
+      end_time:
+        type: integer
+      expected_number:
+        maximum: 1000
+        type: integer
+      introduction:
+        maxLength: 1000
+        type: string
+      location:
+        $ref: '#/definitions/serializer.Point'
+      start_time:
+        type: integer
+      title:
+        maxLength: 30
+        minLength: 2
+        type: string
+    required:
+    - end_time
+    - expected_number
+    - start_time
+    - title
     type: object
   serializer.UpdateUserInfo:
     properties:
@@ -272,6 +292,42 @@ paths:
                   $ref: '#/definitions/serializer.Activity'
               type: object
       summary: 查看活动详情
+      tags:
+      - activity
+    put:
+      consumes:
+      - application/json
+      description: 更新活动接口
+      parameters:
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: activity ID
+        in: path
+        name: aid
+        required: true
+        type: integer
+      - description: activity update info
+        in: body
+        name: UpdateActivityInfo
+        required: true
+        schema:
+          $ref: '#/definitions/serializer.UpdateActivityInfo'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/serializer.Activity'
+              type: object
+      summary: 更新活动
       tags:
       - activity
   /api/v1/activity/cover:

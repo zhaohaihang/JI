@@ -31,7 +31,7 @@ func (esp *EsSyncProc) start() error {
 		return err
 	}
 
-	if err := esp.rm.ConsumerDirect("activityExChange", "activityUpdateQueue", esp.activityDeleteHandler); err != nil {
+	if err := esp.rm.ConsumerDirect("activityExChange", "activityDeleteQueue", esp.activityDeleteHandler); err != nil {
 		return err
 	}
 
@@ -48,7 +48,7 @@ func (esp *EsSyncProc) activityCreateHandler(delivery amqp.Delivery) error {
 	if err := json.Unmarshal(delivery.Body, &activity); err != nil {
 		return err
 	}
-	// TODO sync to ES
+	
 	Params := make(map[string]string)
 	Params["index"] ="activity"
 	Params["id"] = strconv.Itoa(int(activity.ID))
@@ -62,7 +62,15 @@ func (esp *EsSyncProc) activityUpdateHandler(delivery amqp.Delivery) error {
 	if err := json.Unmarshal(delivery.Body, &mqData); err != nil {
 		return err
 	}
-	// TODO sync to ES
+	var activity serializer.Activity
+	if err := json.Unmarshal(delivery.Body, &activity); err != nil {
+		return err
+	}
+
+	Params := make(map[string]string)
+	Params["index"] ="activity"
+	Params["id"] = strconv.Itoa(int(activity.ID))
+	esp.ec.Update(Params,mqData)
 	return nil
 }
 

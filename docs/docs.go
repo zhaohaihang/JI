@@ -233,6 +233,64 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "description": "更新活动接口",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "activity"
+                ],
+                "summary": "更新活动",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization header parameter",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "activity ID",
+                        "name": "aid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "activity update info",
+                        "name": "UpdateActivityInfo",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/serializer.UpdateActivityInfo"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/serializer.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/serializer.Activity"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "delete": {
                 "description": "删除活动",
                 "consumes": [
@@ -667,7 +725,6 @@ const docTemplate = `{
                 "end_time",
                 "expected_number",
                 "start_time",
-                "status",
                 "title"
             ],
             "properties": {
@@ -691,14 +748,6 @@ const docTemplate = `{
                 },
                 "start_time": {
                     "type": "integer"
-                },
-                "status": {
-                    "type": "integer",
-                    "enum": [
-                        0,
-                        1,
-                        2
-                    ]
                 },
                 "title": {
                     "type": "string",
@@ -774,6 +823,43 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "user": {}
+            }
+        },
+        "serializer.UpdateActivityInfo": {
+            "type": "object",
+            "required": [
+                "end_time",
+                "expected_number",
+                "start_time",
+                "title"
+            ],
+            "properties": {
+                "cover": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "end_time": {
+                    "type": "integer"
+                },
+                "expected_number": {
+                    "type": "integer",
+                    "maximum": 1000
+                },
+                "introduction": {
+                    "type": "string",
+                    "maxLength": 1000
+                },
+                "location": {
+                    "$ref": "#/definitions/serializer.Point"
+                },
+                "start_time": {
+                    "type": "integer"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 2
+                }
             }
         },
         "serializer.UpdateUserInfo": {
