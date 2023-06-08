@@ -195,6 +195,14 @@ func (as *ActivityService) DeleteActivityById(aId uint) serializer.Response {
 			Msg:    e.GetMsg(code),
 		}
 	}
+	
+	mqdata := serializer.Activity{
+		ID: aId,
+	}
+	message, _ := json.Marshal(mqdata)
+	if err := as.mq.SendMessageDirect(message, "activityExChange", "activityDeleteQueue"); err != nil {
+		as.logger.Info(err)
+	}
 
 	return serializer.Response{
 		Status: code,
