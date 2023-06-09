@@ -76,3 +76,4 @@ services:
       - XPACK_MONITORING_COLLECTION_ENABLED="true"
     ports:
       - 5601:5601
+    restart: always
