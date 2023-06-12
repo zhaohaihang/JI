@@ -54,3 +54,14 @@ func (ed *EngageDao) DelEngageByIds(uId uint, aId uint) error {
 		Delete(&model.Engage{}).Error
 	return err
 }
+
+func (ed *EngageDao) IsEngaged(uId uint, aId uint) (bool, error) {
+	var count int64
+	err := ed.DB.Model(&model.Engage{}).Where("user_id = ? and activity_id = ?", uId, aId).
+		Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, err
+}
+ 
