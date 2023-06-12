@@ -450,6 +450,72 @@ paths:
       summary: 加入活动
       tags:
       - engage
+  /api/v1/engage/activity/{aid}/user/list:
+    get:
+      consumes:
+      - application/json
+      description: 获取参加某一个活动的所有用户
+      parameters:
+      - description: activity ID
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/serializer.DataList'
+                  - properties:
+                      item:
+                        items:
+                          $ref: '#/definitions/serializer.User'
+                        type: array
+                    type: object
+              type: object
+      summary: 获取参加某一个活动的所有用户
+      tags:
+      - engage
+  /api/v1/engage/user/{uid}/activity/list:
+    delete:
+      consumes:
+      - application/json
+      description: 获取某一个用户参加的所有活动
+      parameters:
+      - description: user ID
+        in: path
+        name: uid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/serializer.Response'
+            - properties:
+                data:
+                  allOf:
+                  - $ref: '#/definitions/serializer.DataList'
+                  - properties:
+                      item:
+                        items:
+                          $ref: '#/definitions/serializer.Activity'
+                        type: array
+                    type: object
+              type: object
+      summary: 获取某一个用户参加的所有活动
+      tags:
+      - engage
   /api/v1/user:
     put:
       consumes:

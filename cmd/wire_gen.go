@@ -50,7 +50,7 @@ func CreateApp() (*app.App, error) {
 	activityController := v1.NewActivityContrller(logrusLogger, activityService, userService)
 	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
 	engageDao := dao.NewEngageDao(databaseDatabase)
-	engageService := service.NewEngageService(logrusLogger, activityDao, engageDao)
+	engageService := service.NewEngageService(logrusLogger, activityDao, userDao, engageDao)
 	engageController := v1.NewEngageController(logrusLogger, engageService)
 	engine := routes.NewRouter(activityController, userController, engageController)
 	httpServer := http.NewHttpServer(configConfig, engine)

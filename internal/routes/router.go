@@ -37,6 +37,8 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController, ec *v1.EngageCo
 		v1.GET("activity/:aid", ac.ShowActivity)
 		v1.GET("activity/near", ac.ListNearActivity)
 		v1.GET("user/:uid", uc.ViewUser)
+		v1.GET("/api/v1/engage/activity/:aid/user/list", ec.EngageUserList)
+		v1.GET("/api/v1/engage/user/:uid/activity/list", ec.EngageActivityList)
 
 		authed := v1.Group("/") // 需要登陆保护
 		authed.Use(middleware.JWT())
@@ -47,7 +49,7 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController, ec *v1.EngageCo
 
 			authed.POST("activity", ac.CreateActivity)
 			authed.PUT("activity/cover", ac.UploadActivityCover)
-			
+
 			authed.PUT("activity/:aid", ac.UpdateActivity)
 			authed.DELETE("activity/cover", ac.DeleteActivity)
 

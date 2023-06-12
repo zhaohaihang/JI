@@ -93,3 +93,8 @@ func (ad *ActivityDao)UpdateActivityStatusFromInprocessToEnd(time int64)(err err
 		Update("status", consts.ACTIVITY_STATUS_ENDED).Error
 	return
 }
+
+func  (ad *ActivityDao) ListActivitysByIds(aIds[]uint)(activitys []*model.Activity, err error){
+	err = ad.DB.Model(&model.Activity{}).Find(&activitys, aIds).Error
+	return
+}
