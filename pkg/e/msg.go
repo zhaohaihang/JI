@@ -9,6 +9,9 @@ var MsgFlags = map[int]string{
 
 	ErrorPasswordNotCompare: "账号密码错误",
 	ErrorUserCreate:         "创建用户错误",
+	ErrorGetUserInfo:         "查询用户信息错误",
+
+	ErrorActivityCreate: "创建活动错误",
 
 	ErrorAuthCheckTokenFail:        "Token鉴权失败",
 	ErrorAuthCheckTokenTimeout:     "Token已超时",

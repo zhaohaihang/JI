@@ -52,7 +52,7 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 	user, err := as.userDao.GetUserById(uId)
 	if err != nil {
 		as.logger.Info(err)
-		code = e.ErrorDatabase
+		code = e.ErrorGetUserInfo
 		return serializer.Response{
 			Status: code,
 			Msg:    e.GetMsg(code),
@@ -75,7 +75,7 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 
 	if err := as.activityDao.CreateActivity(activity); err != nil {
 		as.logger.Info(err)
-		code = e.ErrorDatabase
+		code = e.ErrorActivityCreate
 		return serializer.Response{
 			Status: code,
 			Msg:    e.GetMsg(code),
@@ -84,7 +84,7 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 
 	serializeActivity := serializer.BuildActivity(activity)
 
-	// TODO send to mq
+	// send to mq
 	message, _ := json.Marshal(serializeActivity)
 	if err := as.mq.SendMessageDirect(message, "activityExChange", "activityCreateQueue"); err != nil {
 		as.logger.Info(err)

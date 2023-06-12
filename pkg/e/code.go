@@ -11,8 +11,10 @@ const (
 	// 用户错误
 	ErrorPasswordNotCompare = 10001
 	ErrorUserCreate = 10002
+	ErrorGetUserInfo = 10003
 
 	// 活动错误
+	ErrorActivityCreate = 20001
 
 	// token 错误
 	ErrorAuthCheckTokenFail        = 30001 //token 错误
