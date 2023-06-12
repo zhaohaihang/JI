@@ -34,6 +34,12 @@ func (ad *ActivityDao) UpdateActivityById(aId uint, activity *model.Activity) (e
 	return
 }
 
+func (ad *ActivityDao) UpdateActivityCurrentNumById(aId uint,delta int64) (err error) {
+	err = ad.DB.Model(&model.Activity{}).Where("id = ?",aId).
+		UpdateColumn("current_number", gorm.Expr("current_number + ?", delta)).Error
+	return
+}
+
 func (ad *ActivityDao) DeleteActivityById(aId uint) error {
 	return ad.DB.Where("id=?", aId).Delete(&model.Activity{}).Error
 }

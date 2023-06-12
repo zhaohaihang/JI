@@ -399,6 +399,57 @@ paths:
       summary: 查看指定点周围的所有活动
       tags:
       - activity
+  /api/v1/engage/{aid}:
+    delete:
+      consumes:
+      - application/json
+      description: 取消加入活动
+      parameters:
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: activity ID
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Response'
+      summary: 取消加入活动
+      tags:
+      - engage
+    post:
+      consumes:
+      - application/json
+      description: 加入活动
+      parameters:
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: activity ID
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Response'
+      summary: 加入活动
+      tags:
+      - engage
   /api/v1/user:
     put:
       consumes:

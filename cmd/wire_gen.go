@@ -49,7 +49,10 @@ func CreateApp() (*app.App, error) {
 	userService := service.NewUserService(logrusLogger, userDao, activityDao, qiNiuStroage)
 	activityController := v1.NewActivityContrller(logrusLogger, activityService, userService)
 	userController := v1.NewUserContrller(logrusLogger, activityService, userService)
-	engine := routes.NewRouter(activityController, userController)
+	engageDao := dao.NewEngageDao(databaseDatabase)
+	engageService := service.NewEngageService(logrusLogger, activityDao, engageDao)
+	engageController := v1.NewEngageController(logrusLogger, engageService)
+	engine := routes.NewRouter(activityController, userController, engageController)
 	httpServer := http.NewHttpServer(configConfig, engine)
 	mailClient, err := mail.NewMailClient(configConfig)
 	if err != nil {

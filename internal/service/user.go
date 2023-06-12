@@ -14,12 +14,11 @@ import (
 	"mime/multipart"
 	"time"
 
-	"github.com/google/wire"
 	"github.com/sirupsen/logrus"
 )
 
 type UserService struct {
-	logger          *logrus.Logger
+	logger       *logrus.Logger
 	userDao      *dao.UserDao
 	activityDao  *dao.ActivityDao
 	qiniuStroage *qiniu.QiNiuStroage
@@ -27,14 +26,12 @@ type UserService struct {
 
 func NewUserService(l *logrus.Logger, ud *dao.UserDao, ad *dao.ActivityDao, qs *qiniu.QiNiuStroage) *UserService {
 	return &UserService{
-		logger:          l,
+		logger:       l,
 		userDao:      ud,
 		activityDao:  ad,
 		qiniuStroage: qs,
 	}
 }
-
-var UserServiceProviderSet = wire.NewSet(NewUserService)
 
 // Login 用户登陆函数
 func (us *UserService) Login(loginUserInfo serializer.LoginUserInfo) serializer.Response {

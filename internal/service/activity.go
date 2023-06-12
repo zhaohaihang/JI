@@ -16,7 +16,6 @@ import (
 
 	"github.com/gomodule/redigo/redis"
 
-	"github.com/google/wire"
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,8 +44,6 @@ func NewActivityService(
 		mq:           mq,
 	}
 }
-
-var ActivityServiceProviderSet = wire.NewSet(NewActivityService)
 
 func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.CreateActivityInfo) serializer.Response {
 

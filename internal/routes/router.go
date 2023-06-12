@@ -3,7 +3,7 @@ package routes
 import (
 	"net/http"
 
-	v1 "ji/internal/api/v1"                  
+	v1 "ji/internal/api/v1"
 
 	"ji/pkg/middleware"
 
@@ -17,7 +17,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
+func NewRouter(ac *v1.ActivityController, uc *v1.UserController, ec *v1.EngageController) *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Logger())
 	r.Use(middleware.Cors())
@@ -51,6 +51,8 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController) *gin.Engine {
 			authed.PUT("activity/:aid", ac.UpdateActivity)
 			authed.DELETE("activity/cover", ac.DeleteActivity)
 
+			authed.POST("/api/v1/engage/:aid", ec.EngageActivity)
+			authed.DELETE("/api/v1/engage/:aid", ec.CancelEngageActivity)
 		}
 	}
 	return r
