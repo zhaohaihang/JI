@@ -7,7 +7,7 @@ import (
 	"ji/pkg/mq"
 	"strconv"
 
-	"github.com/streadway/amqp"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type EsSyncProc struct {
@@ -43,14 +43,14 @@ func (esp *EsSyncProc) stop() {
 }
 
 func (esp *EsSyncProc) activityCreateHandler(delivery amqp.Delivery) error {
-	
+
 	var activity serializer.Activity
 	if err := json.Unmarshal(delivery.Body, &activity); err != nil {
 		return err
 	}
-	
+
 	Params := make(map[string]string)
-	Params["index"] ="activity"
+	Params["index"] = "activity"
 	Params["id"] = strconv.Itoa(int(activity.ID))
 	Params["bodyJson"] = string(delivery.Body)
 	esp.ec.Create(Params)
@@ -68,9 +68,9 @@ func (esp *EsSyncProc) activityUpdateHandler(delivery amqp.Delivery) error {
 	}
 
 	Params := make(map[string]string)
-	Params["index"] ="activity"
+	Params["index"] = "activity"
 	Params["id"] = strconv.Itoa(int(activity.ID))
-	esp.ec.Update(Params,mqData)
+	esp.ec.Update(Params, mqData)
 	return nil
 }
 
@@ -80,7 +80,7 @@ func (esp *EsSyncProc) activityDeleteHandler(delivery amqp.Delivery) error {
 		return err
 	}
 	Params := make(map[string]string)
-	Params["index"] ="activity"
+	Params["index"] = "activity"
 	Params["id"] = strconv.Itoa(int(activity.ID))
 	esp.ec.Delete(Params)
 	return nil

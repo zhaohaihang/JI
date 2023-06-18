@@ -86,7 +86,13 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 
 	// send to mq
 	message, _ := json.Marshal(serializeActivity)
-	if err := as.mq.SendMessageDirect(message, "activityExChange", "activityCreateQueue"); err != nil {
+	if err := as.mq.SendMessageDirect(message, "activityExchange", "activityCreateQueue"); err != nil {
+		as.logger.Info(err)
+	}
+
+	// send delaymq
+	remindTTL := activity.StartTime - time.Now().UnixMilli() - 1*60*60*1000
+	if err := as.mq.SendMessageDelay(message, "activityExchange", "activityStartRemind", remindTTL); err != nil {
 		as.logger.Info(err)
 	}
 
@@ -124,6 +130,15 @@ func (as *ActivityService) UpdateActivity(aId uint, activityInfo serializer.Upda
 	message, _ := json.Marshal(serializeActivity)
 	if err := as.mq.SendMessageDirect(message, "activityExChange", "activityUpdateQueue"); err != nil {
 		as.logger.Info(err)
+	}
+
+	// 如果活动开始时间、结束时间、地点发生变化，邮件通知参与人
+	if activityInfo.StartTime != 0 ||
+		activityInfo.EndTime != 0 ||
+		activityInfo.Location.Lat != 0 || activityInfo.Location.Lng != 0 {
+		if err := as.mq.SendMessageDirect(message, "activityExChange", "activityTimeOrLocationChangeRemind"); err != nil {
+			as.logger.Info(err)
+		}
 	}
 
 	return serializer.Response{

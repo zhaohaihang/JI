@@ -9,9 +9,10 @@ type BackProcServer struct {
 	BackProcPool []BackProc
 }
 
-func NewBackProcServer(esp *EsSyncProc) *BackProcServer {
+func NewBackProcServer(esp *EsSyncProc , rmp *RemindMailProc) *BackProcServer {
 	var backProcServer BackProcServer
 	backProcServer.addBackProc(esp)
+	backProcServer.addBackProc(rmp)
 	return &backProcServer
 }
 

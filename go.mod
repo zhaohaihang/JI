@@ -56,6 +56,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/qiniu/go-sdk/v7 v7.15.0
+	github.com/rabbitmq/amqp091-go v1.8.1
 	github.com/robfig/cron v1.2.0
 	github.com/streadway/amqp v1.0.0
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect

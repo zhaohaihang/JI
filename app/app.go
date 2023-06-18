@@ -74,7 +74,7 @@ func (a *App) AwaitSignal() {
 		a.cronServer.Stop()
 	}
 	
-	if a.cronServer != nil {
+	if a.backProcServer != nil {
 		a.backProcServer.Stop()
 	}
 	os.Exit(0)

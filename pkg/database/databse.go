@@ -19,7 +19,7 @@ type Database struct {
 	Mysql *gorm.DB
 }
 
-func NewDatabase(config *config.Config,gl *GormLogger) *Database {
+func NewDatabase(config *config.Config, gl *GormLogger) *Database {
 	dbUser := config.Mysql.DbUser
 	dbPassWord := config.Mysql.DbPassWord
 	dbHost := config.Mysql.DbHost
@@ -66,6 +66,7 @@ func NewDatabase(config *config.Config,gl *GormLogger) *Database {
 		AutoMigrate(
 			&model.User{},
 			&model.Activity{},
+			&model.Engage{},
 		)
 	if err != nil {
 		fmt.Println("register table fail")
@@ -75,5 +76,3 @@ func NewDatabase(config *config.Config,gl *GormLogger) *Database {
 	return &database
 
 }
-
-

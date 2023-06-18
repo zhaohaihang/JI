@@ -34,8 +34,6 @@ func NewMailClient(cfg *config.Config) (*MailClient, error) {
 
 var MailPoolProviderSet = wire.NewSet(NewMailClient)
 
-//mddebbjnnqipbdjg
-
 func (mc *MailClient) SendRemindEmails(tos []string, subject, content string) error {
 	e := &email.Email{
 		To:      tos,

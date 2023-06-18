@@ -67,7 +67,16 @@ func (ud *UserDao) UpdateUserAvatarById(uId uint, path string) (err error) {
 //     return users, nil
 // }
 
-func (ud *UserDao) ListUsersByIds(uIds[]uint)(users []*model.User, err error){
+func (ud *UserDao) ListUsersByIds(uIds []uint) (users []*model.User, err error) {
 	err = ud.DB.Model(&model.User{}).Find(&users, uIds).Error
 	return
+}
+
+func (ud *UserDao) ListUsersEmailsByIds(uids []uint) ([]string, error) {
+	var emails []string
+	err := ud.DB.Model(&model.User{}).Where("id IN ?",uids).Pluck("email", &emails).Error
+	if err != nil {
+		return nil, err
+	}
+	return emails, nil
 }

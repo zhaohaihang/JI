@@ -24,6 +24,19 @@ func (ad *ActivityDao) CreateActivity(activity *model.Activity) error {
 	return ad.DB.Model(&model.Activity{}).Create(&activity).Error
 }
 
+func (ad *ActivityDao) ExistOrNotByActivityId(aId uint) (activity *model.Activity, exist bool, err error) {
+	var count int64
+	err = ad.DB.Model(&model.Activity{}).Where("id = ?", aId).Count(&count).Error
+	if count == 0 {
+		return activity, false, err
+	}
+	err = ad.DB.Model(&model.Activity{}).Where("id =?", aId).First(&activity).Error
+	if err != nil {
+		return activity, false, err
+	}
+	return activity, true, nil
+}
+
 func (ad *ActivityDao) GetActivityById(aId uint) (activity *model.Activity, err error) {
 	err = ad.DB.Model(&model.Activity{}).Where("id=?", aId).First(&activity).Error
 	return
