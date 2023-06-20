@@ -16,10 +16,14 @@ func NewBackProcServer(esp *EsSyncProc , rmp *RemindMailProc) *BackProcServer {
 	return &backProcServer
 }
 
-func (bps *BackProcServer) Start() {
+func (bps *BackProcServer) Start() error {
 	for _, backProc := range bps.BackProcPool {
-		backProc.start()
+		err := backProc.start()
+		if err != nil {
+			return err 
+		}
 	}
+	return nil
 }
 
 func (bps *BackProcServer) Stop() {

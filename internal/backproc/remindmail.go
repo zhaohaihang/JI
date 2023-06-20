@@ -62,37 +62,47 @@ func (rmp *RemindMailProc) stop() {
 func (rmp *RemindMailProc) activityStartRemindHandler(delivery amqp.Delivery) error {
 	var mqActivity serializer.Activity
 	if err := json.Unmarshal(delivery.Body, &mqActivity); err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
 
 	// 判断活动是否存在
 	activity, exist, err := rmp.activityDao.ExistOrNotByActivityId(mqActivity.ID)
 	if err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
 	if !exist {
+		rmp.logger.Info("activity %d is not exists")
 		return nil
 	}
 	// 判断时间是否是提前时间一小时
 	dlta := activity.StartTime - time.Now().UnixMilli()
 	if !(ONE_HONOR_MILL-30*1000 <= dlta && dlta <= ONE_HONOR_MILL+30*1000) {
+		rmp.logger.Info("activity %d start time has change")
 		return nil
 	}
 
 	// 获取该活动的所有参加人员id
 	uIds, _, err := rmp.engageDao.ListUserIdsByActivityId(activity.ID)
 	if err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
+	rmp.logger.Debugf("particspat user ids: %v",uIds)
+
 
 	//获取参加人员email
 	emails, err := rmp.userDao.ListUsersEmailsByIds(uIds)
 	if err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
+	rmp.logger.Debugf("particspat user emails: %v",emails)
 
 	// 发送消息至每一个人
 	if err := rmp.mailClient.SendRemindEmails(emails, "Activity Start", activity.Title+"The event will start in one hour"); err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
 	return nil
@@ -103,26 +113,33 @@ func (rmp *RemindMailProc) activityStartRemindHandler(delivery amqp.Delivery) er
 func (rmp *RemindMailProc) activityTimeOrLocationChangeRemindHandler(delivery amqp.Delivery) error {
 	var mqActivity serializer.Activity
 	if err := json.Unmarshal(delivery.Body, &mqActivity); err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
 
 	// 获取该活动的所有参加人员id
 	uIds, _, err := rmp.engageDao.ListUserIdsByActivityId(mqActivity.ID)
 	if err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
+	rmp.logger.Debugf("particspat user ids: %v",uIds)
 
 	//获取参加人员email
 	emails, err := rmp.userDao.ListUsersEmailsByIds(uIds)
 	if err != nil {
+		rmp.logger.Info(err)
 		return err
 	}
+	rmp.logger.Debugf("particspat user emails: %v",emails)
 
 	// 发送消息至每一个人
-	if err := rmp.mailClient.SendRemindEmails(emails,
+	if err := rmp.mailClient.SendRemindEmails(
+		emails,
 		"Activity Tiem or Location Change",
 		mqActivity.Title+"The activity's start time or location change"); err != nil {
-		return err
+			rmp.logger.Info(err)
+			return err
 	}
 	return nil
 }

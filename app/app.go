@@ -21,19 +21,22 @@ type App struct {
 	httpServer     *http.HttpServer
 	cronServer     *cron.CronServer
 	backProcServer *backproc.BackProcServer
+	logger       *logrus.Logger
 }
 
 func NewApp(c *config.Config,
 	r *gin.Engine,
 	hs *http.HttpServer,
 	cs *cron.CronServer,
-	bps *backproc.BackProcServer) *App {
+	bps *backproc.BackProcServer,
+	l *logrus.Logger) *App {
 	return &App{
 		config:         c,
 		router:         r,
 		httpServer:     hs,
 		cronServer:     cs,
 		backProcServer: bps,
+		logger:       l,
 	}
 }
 
@@ -51,7 +54,8 @@ func (a *App) Start() error {
 	}
 
 	if a.backProcServer != nil {
-		a.backProcServer.Start()
+		err := a.backProcServer.Start()
+		return errors.Wrap(err, "backProc Server start error")
 	}
 
 	return nil
