@@ -67,7 +67,7 @@ func CreateApp() (*app.App, error) {
 	esSyncProc := backproc.NewEsSyncProc(esClient, rabbitMQClient)
 	remindMailProc := backproc.NewRemindMailProc(activityDao, userDao, engageDao, rabbitMQClient, mailClient, logrusLogger)
 	backProcServer := backproc.NewBackProcServer(esSyncProc, remindMailProc)
-	appApp := app.NewApp(configConfig, engine, httpServer, cronServer, backProcServer)
+	appApp := app.NewApp(configConfig, engine, httpServer, cronServer, backProcServer, logrusLogger)
 	return appApp, nil
 }
 
