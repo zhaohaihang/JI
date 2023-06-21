@@ -7,7 +7,6 @@ import (
 	"ji/pkg/database"
 
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 type ActivityDao struct {
@@ -47,8 +46,8 @@ func (ad *ActivityDao) UpdateActivityById(aId uint, activity *model.Activity) (e
 	return
 }
 
-func (ad *ActivityDao) UpdateActivityCurrentNumById(aId uint,delta int64) (err error) {
-	err = ad.DB.Model(&model.Activity{}).Where("id = ?",aId).
+func (ad *ActivityDao) UpdateActivityCurrentNumById(aId uint, delta int64) (err error) {
+	err = ad.DB.Model(&model.Activity{}).Where("id = ?", aId).
 		UpdateColumn("current_number", gorm.Expr("current_number + ?", delta)).Error
 	return
 }
@@ -93,21 +92,20 @@ func (ad *ActivityDao) SearchActivity(searchStr string, page model.BasePage) (ac
 	return
 }
 
-func (ad *ActivityDao)UpdateActivityStatusFromNostartToInprocess(time int64)(activitys []*model.Activity,err error){
-	err = ad.DB.Model(activitys).Clauses(clause.Returning{Columns: []clause.Column{{Name: "id"}}}).
-		Where("start_time <= ? AND status = ?", time, consts.ACTIVITY_STATUS_NOSTART).
+//
+func (ad *ActivityDao) UpdateActivityStatusFromNostartToInprocess(aId uint) (err error) {
+	err = ad.DB.Model(&model.Activity{}).Where("id = ?", aId).
 		Update("status", consts.ACTIVITY_STATUS_INPROCESS).Error
 	return
 }
 
-func (ad *ActivityDao)UpdateActivityStatusFromInprocessToEnd(time int64)(err error){
-	err = ad.DB.Model(model.Activity{}).
-		Where("end_time < ? AND status = ?", time, consts.ACTIVITY_STATUS_INPROCESS).
+func (ad *ActivityDao) UpdateActivityStatusFromInprocessToEnd(aId uint) (err error) {
+	err = ad.DB.Model(&model.Activity{}).Where("id = ?", aId).
 		Update("status", consts.ACTIVITY_STATUS_ENDED).Error
 	return
 }
 
-func  (ad *ActivityDao) ListActivitysByIds(aIds[]uint)(activitys []*model.Activity, err error){
+func (ad *ActivityDao) ListActivitysByIds(aIds []uint) (activitys []*model.Activity, err error) {
 	err = ad.DB.Model(&model.Activity{}).Find(&activitys, aIds).Error
 	return
 }

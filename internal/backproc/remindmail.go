@@ -19,7 +19,7 @@ const (
 type RemindMailProc struct {
 	activityDao    *dao.ActivityDao
 	userDao        *dao.UserDao
-	engageDao      dao.EngageDao
+	engageDao      *dao.EngageDao
 	rabbitmqClient *mq.RabbitMQClient
 	mailClient     *mail.MailClient
 	logger         *logrus.Logger
@@ -36,7 +36,7 @@ func NewRemindMailProc(
 	return &RemindMailProc{
 		activityDao:    ad,
 		userDao:        ud,
-		engageDao:      *ed,
+		engageDao:      ed,
 		rabbitmqClient: rc,
 		mailClient:     mc,
 		logger:         l,

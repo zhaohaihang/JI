@@ -84,17 +84,29 @@ func (as *ActivityService) CreateActivity(uId uint, activityInfo serializer.Crea
 
 	serializeActivity := serializer.BuildActivity(activity)
 
-	// send to mq
+	// send to mq，用于ES同步
 	message, _ := json.Marshal(serializeActivity)
 	if err := as.mq.SendMessageDirect(message, "activityExchange", "activityCreateQueue"); err != nil {
 		as.logger.Info(err)
 	}
 
-	// send delaymq
+	// 发送至mq，用于提前一小时提醒参与者
 	remindTTL := activity.StartTime - time.Now().UnixMilli() - 1*60*60*1000
 	if err := as.mq.SendMessageDelay(message, "activityExchange", "activityStartRemind", remindTTL); err != nil {
 		as.logger.Info(err)
 	}
+
+	// 发送至mq, 用于更新数据库中活动状态, 从未开始到开始
+	startTTL := activity.StartTime -time.Now().UnixMilli()
+	if err := as.mq.SendMessageDelay(message, "activityExchange", "activityStatusToStart", startTTL); err != nil {
+		as.logger.Info(err)
+	} 
+
+	// 发送至mq, 用于更新数据库中活动状态, 从开始到结束
+	endTTL := activity.StartTime -time.Now().UnixMilli()
+	if err := as.mq.SendMessageDelay(message, "activityExchange", "activityStatusToEnd", endTTL); err != nil {
+		as.logger.Info(err)
+	} 
 
 	return serializer.Response{
 		Status: code,
