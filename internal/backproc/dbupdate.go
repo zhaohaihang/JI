@@ -15,7 +15,7 @@ const (
 	ONE_MINITE_MILL = 1 * 60 * 1000
 )
 
-type DBSyncProc struct {
+type DBUpdateProc struct {
 	activityDao *dao.ActivityDao
 	userDao     *dao.UserDao
 	engageDao   *dao.EngageDao
@@ -23,13 +23,13 @@ type DBSyncProc struct {
 	logger      *logrus.Logger
 }
 
-func NewDBSyncProc(
+func NewDBUpdateProc(
 	ad *dao.ActivityDao,
 	ud *dao.UserDao,
 	ed *dao.EngageDao,
 	rm *mq.RabbitMQClient,
-	l *logrus.Logger) *DBSyncProc {
-	return &DBSyncProc{
+	l *logrus.Logger) *DBUpdateProc {
+	return &DBUpdateProc{
 		activityDao: ad,
 		userDao:     ud,
 		engageDao:   ed,
@@ -38,23 +38,23 @@ func NewDBSyncProc(
 	}
 }
 
-func (dsp *DBSyncProc) start() error {
-	if err := dsp.rm.ConsumerDirect("activityExChange", "activityStatusToStart", dsp.activityStatusToStartHandler); err != nil {
+func (dup *DBUpdateProc) start() error {
+	if err := dup.rm.ConsumerDirect("activityExChange", "activityStatusToStart", dup.activityStatusToStartHandler); err != nil {
 		return err
 	}
 
-	if err := dsp.rm.ConsumerDirect("activityExChange", "activityStatusToEnd", dsp.activityStatusToEndHandler); err != nil {
+	if err := dup.rm.ConsumerDirect("activityExChange", "activityStatusToEnd", dup.activityStatusToEndHandler); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (dsp *DBSyncProc) stop() {
-	dsp.rm.Close()
+func (dup *DBUpdateProc) stop() {
+	dup.rm.Close()
 }
 
-func (dsp *DBSyncProc) activityStatusToStartHandler(delivery amqp.Delivery) error {
+func (dup *DBUpdateProc) activityStatusToStartHandler(delivery amqp.Delivery) error {
 
 	var mqactivity serializer.Activity
 	if err := json.Unmarshal(delivery.Body, &mqactivity); err != nil {
@@ -62,55 +62,55 @@ func (dsp *DBSyncProc) activityStatusToStartHandler(delivery amqp.Delivery) erro
 	}
 
 	// 判断活动是否存在
-	activity, exist, err := dsp.activityDao.ExistOrNotByActivityId(mqactivity.ID)
+	activity, exist, err := dup.activityDao.ExistOrNotByActivityId(mqactivity.ID)
 	if err != nil {
-		dsp.logger.Info(err)
+		dup.logger.Info(err)
 		return err
 	}
 	if !exist {
-		dsp.logger.Info("activity %d is not exists")
+		dup.logger.Info("activity %d is not exists")
 		return nil
 	}
 	// 判断是否应该更新状态
 	dlta := activity.StartTime - time.Now().UnixMilli()
 	if !(-1*ONE_MINITE_MILL <= dlta && dlta <= ONE_MINITE_MILL) {
-		dsp.logger.Info("activity %d start time has change")
+		dup.logger.Info("activity %d start time has change")
 		return nil
 	}
 
-	if err := dsp.activityDao.UpdateActivityStatusFromNostartToInprocess(activity.ID); err != nil {
-		dsp.logger.Info(err)
+	if err := dup.activityDao.UpdateActivityStatusFromNostartToInprocess(activity.ID); err != nil {
+		dup.logger.Info(err)
 		return err
 	}
 	
 	return nil
 }
 
-func (dsp *DBSyncProc) activityStatusToEndHandler(delivery amqp.Delivery) error {
+func (dup *DBUpdateProc) activityStatusToEndHandler(delivery amqp.Delivery) error {
 	var mqactivity serializer.Activity
 	if err := json.Unmarshal(delivery.Body, &mqactivity); err != nil {
 		return err
 	}
 
 	// 判断活动是否存在
-	activity, exist, err := dsp.activityDao.ExistOrNotByActivityId(mqactivity.ID)
+	activity, exist, err := dup.activityDao.ExistOrNotByActivityId(mqactivity.ID)
 	if err != nil {
-		dsp.logger.Info(err)
+		dup.logger.Info(err)
 		return err
 	}
 	if !exist {
-		dsp.logger.Info("activity %d is not exists")
+		dup.logger.Info("activity %d is not exists")
 		return nil
 	}
 	// 判断是否应该更新状态
 	dlta := activity.EndTime - time.Now().UnixMilli()
 	if !(-1*ONE_MINITE_MILL <= dlta && dlta <= ONE_MINITE_MILL) {
-		dsp.logger.Info("activity %d end time has change")
+		dup.logger.Info("activity %d end time has change")
 		return nil
 	}
 
-	if err := dsp.activityDao.UpdateActivityStatusFromInprocessToEnd(activity.ID); err != nil {
-		dsp.logger.Info(err)
+	if err := dup.activityDao.UpdateActivityStatusFromInprocessToEnd(activity.ID); err != nil {
+		dup.logger.Info(err)
 		return err
 	}
 
