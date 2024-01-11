@@ -7,4 +7,5 @@ var DaoProviderSet = wire.NewSet(
 	NewActivityDao,
 	NewEngageDao,
 	NewLikeDao,
+	NewFollowedDao,
 )

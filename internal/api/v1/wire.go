@@ -7,4 +7,5 @@ var ControllerProviderSet = wire.NewSet(
 	NewActivityContrller,
 	NewEngageController,
 	NewLikeContrller,
+	NewFollowContrller,
 )
