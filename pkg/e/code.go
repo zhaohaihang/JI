@@ -31,4 +31,7 @@ const (
 
 	// 限流
 	ErrorUserActivityLimit = 60001
+
+	//MQ
+	ErrorSendMsgToMQ = 70001
 )

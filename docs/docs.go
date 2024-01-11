@@ -382,7 +382,7 @@ const docTemplate = `{
             }
         },
         "/api/v1/engage/user/{uid}/activity/list": {
-            "delete": {
+            "get": {
                 "description": "获取某一个用户参加的所有活动",
                 "consumes": [
                     "application/json"
@@ -490,6 +490,45 @@ const docTemplate = `{
                     "engage"
                 ],
                 "summary": "取消加入活动",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization header parameter",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "activity ID",
+                        "name": "aid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serializer.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/like": {
+            "post": {
+                "description": "用户为活动点赞",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "like"
+                ],
+                "summary": "用户为活动点赞",
                 "parameters": [
                     {
                         "type": "string",

@@ -52,7 +52,10 @@ func CreateApp() (*app.App, error) {
 	engageDao := dao.NewEngageDao(databaseDatabase)
 	engageService := service.NewEngageService(logrusLogger, activityDao, userDao, engageDao)
 	engageController := v1.NewEngageController(logrusLogger, engageService)
-	engine := routes.NewRouter(activityController, userController, engageController)
+	likeDao := dao.NewLikeDao(databaseDatabase)
+	likeService := service.NewLikeService(logrusLogger, likeDao, userDao, activityDao, pool, rabbitMQClient)
+	likeController := v1.NewLikeContrller(logrusLogger, likeService)
+	engine := routes.NewRouter(activityController, userController, engageController, likeController)
 	httpServer := http.NewHttpServer(configConfig, engine)
 	mailClient, err := mail.NewMailClient(configConfig)
 	if err != nil {

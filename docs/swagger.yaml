@@ -484,7 +484,7 @@ paths:
       tags:
       - engage
   /api/v1/engage/user/{uid}/activity/list:
-    delete:
+    get:
       consumes:
       - application/json
       description: 获取某一个用户参加的所有活动
@@ -516,6 +516,32 @@ paths:
       summary: 获取某一个用户参加的所有活动
       tags:
       - engage
+  /api/v1/like:
+    post:
+      consumes:
+      - application/json
+      description: 用户为活动点赞
+      parameters:
+      - description: Authorization header parameter
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: activity ID
+        in: path
+        name: aid
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializer.Response'
+      summary: 用户为活动点赞
+      tags:
+      - like
   /api/v1/user:
     put:
       consumes:

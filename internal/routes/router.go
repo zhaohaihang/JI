@@ -17,7 +17,12 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewRouter(ac *v1.ActivityController, uc *v1.UserController, ec *v1.EngageController) *gin.Engine {
+func NewRouter(
+	ac *v1.ActivityController, 
+	uc *v1.UserController, 
+	ec *v1.EngageController,
+	lc *v1.LikeController,
+	) *gin.Engine {
 	r := gin.Default()
 	r.Use(middleware.Logger())
 	r.Use(middleware.Cors())
@@ -55,6 +60,8 @@ func NewRouter(ac *v1.ActivityController, uc *v1.UserController, ec *v1.EngageCo
 
 			authed.POST("engage/:aid", ec.EngageActivity)
 			authed.DELETE("engage/:aid", ec.CancelEngageActivity)
+
+			authed.POST("/api/v1/like",lc.LikeActivity)
 		}
 	}
 	return r

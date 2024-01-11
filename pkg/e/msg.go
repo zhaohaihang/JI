@@ -23,6 +23,8 @@ var MsgFlags = map[int]string{
 
 	ErrorUploadFile:        "文件上传失败",
 	ErrorUserActivityLimit: "创建活动太频繁",
+
+	ErrorSendMsgToMQ:"消息发送失败",
 }
 
 // GetMsg 获取状态码对应信息

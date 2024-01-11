@@ -6,4 +6,5 @@ var ServiceProviderSet = wire.NewSet(
 	NewUserService,
 	NewActivityService,
 	NewEngageService,
+	NewLikeService,
 )

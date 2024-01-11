@@ -157,3 +157,13 @@ func (uc *UserController) ChangePasswd(c *gin.Context) {
 		uc.logger.Infoln(err)
 	}
 }
+
+// 为活动点赞
+
+// 用户签到
+
+// 用户关注别的用户
+
+// 用户查看自己关注的用户列表
+
+// 用户查看关注自己的用户列表

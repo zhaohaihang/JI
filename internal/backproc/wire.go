@@ -7,4 +7,5 @@ var BackProcServerProviderSet = wire.NewSet(
 	NewEsSyncProc,
 	NewRemindMailProc,
 	NewDBUpdateProc,
+	NewLikeUpdateProc,
 )
