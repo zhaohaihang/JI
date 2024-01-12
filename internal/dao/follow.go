@@ -39,3 +39,37 @@ func (fd *FollowDao) IsFollowed(uId uint ,followdId uint) (int8,error) {
 	}
 	return isFollowed, nil
 }
+
+// uId关注的人
+func (fd *FollowDao)GetFollowIdsById(uId uint) ([]int64, int64, error) {
+	var followCnt int64
+	var followIds []int64
+
+	// user_id -> following_id
+	result := fd.db.Model(&model.Follow{}).Where("user_id = ?", uId).Where("followed = ?", 1).Pluck("follow_id", &followIds)
+	followCnt = result.RowsAffected
+
+	if nil != result.Error {
+		return nil, 0, result.Error
+	}
+
+	return followIds, followCnt, nil
+	
+}
+
+// 关注uId的人
+func (fd *FollowDao)GetFollowedIdsById(uId uint) ([]int64, int64, error) {
+	var followedCnt int64
+	var followedIds []int64
+
+	// user_id -> following_id
+	result := fd.db.Model(&model.Follow{}).Where("follow_id = ?", uId).Where("followed = ?", 1).Pluck("user_id", &followedIds)
+	followedCnt = result.RowsAffected
+
+	if nil != result.Error {
+		return nil, 0, result.Error
+	}
+
+	return followedIds, followedCnt, nil
+	
+}

@@ -78,8 +78,8 @@ func (ls *LikeService) UserLikeActivity(uId uint, aId uint, liked int8) serializ
 		conn.Do("sadd", fmt.Sprintf(keyActivityLikedUser, aId), uId)
 	case 2:
 		// 取消点赞
-		conn.Do("sadd", fmt.Sprintf(KeyUserLikeActivity, uId), aId)
-		conn.Do("sadd", fmt.Sprintf(keyActivityLikedUser, aId), uId)
+		conn.Do("sdel", fmt.Sprintf(KeyUserLikeActivity, uId), aId)
+		conn.Do("sdel", fmt.Sprintf(keyActivityLikedUser, aId), uId)
 	default:
 		ls.logger.Info("liked error")
 	}
